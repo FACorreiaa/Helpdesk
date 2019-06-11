@@ -1,0 +1,13 @@
+[2019-06-11 23:02:17.872] [renderer1] [error] Transporte desconhecido ou sem suporte “disabled” para o endereço “disabled:”: Error: Transporte desconhecido ou sem suporte “disabled” para o endereço “disabled:”
+[2019-06-11 23:02:43.288] [renderer1] [error] Transporte desconhecido ou sem suporte “disabled” para o endereço “disabled:”: Error: Transporte desconhecido ou sem suporte “disabled” para o endereço “disabled:”
+[2019-06-11 23:03:21.239] [renderer1] [error] Language client is not ready yet: Error: Language client is not ready yet
+    at t.LanguageClient.sendNotification (/home/fernando/.vscode/extensions/dbaeumer.vscode-eslint-1.9.0/client/out/extension.js:1:50829)
+    at T.s.workspace.onDidChangeConfiguration (/home/fernando/.vscode/extensions/dbaeumer.vscode-eslint-1.9.0/client/out/extension.js:1:99853)
+    at u.fire (/usr/share/code/resources/app/out/vs/workbench/services/extensions/node/extensionHostProcess.js:47:720)
+    at p.$acceptConfigurationChanged (/usr/share/code/resources/app/out/vs/workbench/services/extensions/node/extensionHostProcess.js:402:725)
+    at define.$acceptConfigurationChanged.getConfigProvider.then.n (/usr/share/code/resources/app/out/vs/workbench/services/extensions/node/extensionHostProcess.js:402:225)
+[2019-06-11 23:06:43.949] [renderer1] [error] An unknown error occurred. Please consult the log for more details.
+[2019-06-11 23:07:08.176] [renderer1] [error] An unknown error occurred. Please consult the log for more details.
+[2019-06-11 23:07:43.268] [renderer1] [error] Transporte desconhecido ou sem suporte “disabled” para o endereço “disabled:”: Error: Transporte desconhecido ou sem suporte “disabled” para o endereço “disabled:”
+[2019-06-11 23:12:43.307] [renderer1] [error] Transporte desconhecido ou sem suporte “disabled” para o endereço “disabled:”: Error: Transporte desconhecido ou sem suporte “disabled” para o endereço “disabled:”
+[2019-06-11 23:17:43.276] [renderer1] [error] Transporte desconhecido ou sem suporte “disabled” para o endereço “disabled:”: Error: Transporte desconhecido ou sem suporte “disabled” para o endereço “disabled:”

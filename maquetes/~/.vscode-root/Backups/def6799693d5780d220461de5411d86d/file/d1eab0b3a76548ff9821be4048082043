@@ -1,0 +1,19 @@
+file:///home/fernando/ProgramacaoWeb/Trabalho_V2/maquetes/src/components/Login.js {"mtime":1560291449038,"size":0,"etag":"33d3bn4730","orphaned":false}
+import React, { Component } from 'react'
+
+export class Login extends Component {
+    constructor(props) {
+        this.state = {
+            
+        }
+    }
+    render() {
+        return (
+            <div>
+                
+            </div>
+        )
+    }
+}
+
+export default Login
