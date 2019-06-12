@@ -16,11 +16,13 @@ var statsRouter = require('./routes/stats');
 var votesRouter = require('./routes/votes');
 
 //ADICIONEI
+require('dotenv').config()
 //Configure mongoose's promise to global promise
 mongoose.promise = global.Promise;
 
 //Configure isProduction variable
 const isProduction = process.env.NODE_ENV === 'production';
+console.log(process.env.NODE_ENV);
 
 var app = express();
 app.set('view engine', 'ejs');
@@ -75,7 +77,7 @@ app.use('/votes', votesRouter);
 //Error handlers & middlewares
 if (!isProduction) {
   app.use((err, req, res) => {
-    res.status(err.status || 500);
+    //res.sendStatus(err.status || 500);
 
     res.json({
       errors: {
