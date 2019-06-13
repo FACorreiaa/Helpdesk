@@ -1,6 +1,8 @@
 import React, { Component } from "react";
-import { getJWT } from "../helpers/jwt";
+import { getJWT } from "../../helpers/jwt";
 import axios from "axios";
+import { withRouter } from "react-router";
+
 export class Auth extends Component {
   constructor(props) {
     super(props);
@@ -54,4 +56,4 @@ export class Auth extends Component {
   }
 }
 
-export default Auth;
+export default withRouter(Auth);
