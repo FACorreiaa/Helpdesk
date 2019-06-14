@@ -8,7 +8,7 @@ import Container from "@material-ui/core/Container";
 import BottomNavigation from "@material-ui/core/BottomNavigation";
 import { classes } from "../constants/footer";
 import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
-import { MDBCol, MDBContainer, MDBRow, MDBFooter } from "mdbreact";
+import RestoreIcon from "@material-ui/icons/Restore";
 
 function TabContainer(props) {
   return (
@@ -30,7 +30,13 @@ TabContainer.propTypes = {
 
 export default function Footer() {
   const [value, setValue] = React.useState(0);
-
+  const footerStyle = {
+    //backgroundColor: `#3f51b5`
+    //flexGrow: 1,
+    width: `calc(85% + 100px)`,
+    position: "fixed",
+    bottom: 0
+  };
   return (
     <>
       <BottomNavigation
@@ -38,11 +44,18 @@ export default function Footer() {
         onChange={(event, newValue) => {
           setValue(newValue);
         }}
+        style={footerStyle}
         showLabels
-        className={classes.root}
       >
-        {" "}
-        <BottomNavigationAction label="IPCA @ 2019" />} />
+        <BottomNavigationAction
+          label="IPCA 2019 @ MEI"
+          icon={<RestoreIcon />}
+        />
+
+        <BottomNavigationAction
+          label="Programação Web"
+          icon={<RestoreIcon />}
+        />
       </BottomNavigation>
     </>
   );

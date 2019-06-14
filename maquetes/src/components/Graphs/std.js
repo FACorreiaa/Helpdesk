@@ -1,4 +1,6 @@
-import React, { Component } from "react";
+import React, {
+  Component
+} from "react";
 // Import fusioncharts.js files from fusioncharts module
 import FusionCharts from "fusioncharts";
 // Import the timeseries file from fusioncharts module
@@ -28,24 +30,22 @@ class Std extends Component {
       timeseriesDs: {
         type: "timeseries",
         renderAt: "container",
-        width: "600",
+        width: "500",
         height: "400",
         dataSource: {
           caption: {
             text: "Desvio Padrão"
           },
-          yAxis: [
-            {
-              plot: {
-                open: "Open",
-                high: "High",
-                low: "Low",
-                close: "Close",
-                type: "candlestick"
-              },
-              title: "Value"
-            }
-          ],
+          yAxis: [{
+            plot: {
+              open: "Open",
+              high: "High",
+              low: "Low",
+              close: "Close",
+              type: "candlestick"
+            },
+            title: "Value"
+          }],
           // Initially data is set as null
           data: null
         }
@@ -81,10 +81,14 @@ class Std extends Component {
   }
 
   render() {
-    return (
-      <div className="App">
-        <ReactFC {...this.state.timeseriesDs} />
-      </div>
+    return ( <
+      div className = "App" >
+      <
+      ReactFC {
+        ...this.state.timeseriesDs
+      }
+      /> <
+      /div>
     );
   }
 }

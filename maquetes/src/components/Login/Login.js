@@ -5,7 +5,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
-
+import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { classes } from "../constants/login";
 import axios from "axios";
 
@@ -53,16 +53,17 @@ export class Login extends Component {
               alt="IPCA"
               src="http://i68.tinypic.com/2gspvkm.png"
               className={classes.bigAvatar}
-            />
+            />{" "}
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>{" "}
-            <form
+            <ValidatorForm
+              ref="form"
               className={classes.form}
               noValidate
               onSubmit={e => this.submit(e)}
             >
-              <TextField
+              <TextValidator
                 variant="outlined"
                 margin="normal"
                 required
@@ -74,8 +75,10 @@ export class Login extends Component {
                 autoFocus
                 onChange={e => this.change(e)}
                 value={this.state.email}
+                validators={["required"]}
+                errorMessages={["this field is required"]}
               />{" "}
-              <TextField
+              <TextValidator
                 variant="outlined"
                 margin="normal"
                 required
@@ -87,7 +90,10 @@ export class Login extends Component {
                 autoComplete="current-password"
                 onChange={e => this.change(e)}
                 value={this.state.password}
-              />
+                onBlur={this.isDisabled}
+                validators={["required"]}
+                errorMessages={["this field is required"]}
+              />{" "}
               <Button
                 type="submit"
                 fullWidth
@@ -97,7 +103,7 @@ export class Login extends Component {
               >
                 Submit{" "}
               </Button>{" "}
-            </form>{" "}
+            </ValidatorForm>{" "}
           </div>{" "}
         </Container>{" "}
       </div>

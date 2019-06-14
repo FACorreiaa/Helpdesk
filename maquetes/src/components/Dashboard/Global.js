@@ -4,7 +4,7 @@ import Grid from "@material-ui/core/Grid";
 import { classes } from "../constants/dashboard";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-
+import Nivo from "../Graphs/nivo";
 export class Global extends Component {
   render() {
     return (
@@ -21,9 +21,9 @@ export class Global extends Component {
                 InputLabelProps={{
                   shrink: true
                 }}
-              />
-            </form>
-          </Grid>
+              />{" "}
+            </form>{" "}
+          </Grid>{" "}
           <Grid item xs>
             <form className={classes.container} noValidate>
               <TextField
@@ -35,76 +35,80 @@ export class Global extends Component {
                 InputLabelProps={{
                   shrink: true
                 }}
-              />
-            </form>
-          </Grid>
+              />{" "}
+            </form>{" "}
+          </Grid>{" "}
           <Grid item xs>
             <Button variant="contained" className={classes.button}>
-              Submit
-            </Button>
-          </Grid>
+              Submit{" "}
+            </Button>{" "}
+          </Grid>{" "}
         </Grid>
-
         <Grid container spacing={3}>
           <Grid item xs>
-            <Paper className={classes.paper}>Label</Paper>
-          </Grid>
+            <Paper className={classes.paper}> Label </Paper>{" "}
+          </Grid>{" "}
           <Grid item xs>
-            <Paper className={classes.paper}>Label</Paper>
-          </Grid>
+            <Paper className={classes.paper}> Label </Paper>{" "}
+          </Grid>{" "}
           <Grid item xs>
-            <Paper className={classes.paper}>Label</Paper>
-          </Grid>
-        </Grid>
+            <Paper className={classes.paper}> Label </Paper>{" "}
+          </Grid>{" "}
+        </Grid>{" "}
         <Grid container spacing={3}>
           <Grid item xs>
             <Paper className={classes.paper} variant="inherit">
-              Resultado
-            </Paper>
-          </Grid>
+              Resultado{" "}
+            </Paper>{" "}
+          </Grid>{" "}
           <Grid item xs>
             <Paper className={classes.paper} variant="srOnly">
-              Resultado
-            </Paper>
-          </Grid>
+              Resultado{" "}
+            </Paper>{" "}
+          </Grid>{" "}
           <Grid item xs>
             <Paper className={classes.paper} variant="caption">
-              Resultado
-            </Paper>
-          </Grid>
-        </Grid>
+              Resultado{" "}
+            </Paper>{" "}
+          </Grid>{" "}
+        </Grid>{" "}
         <Grid container spacing={3}>
           <Grid item xs>
-            <Paper className={classes.paper}>Label</Paper>
-          </Grid>
+            <Paper className={classes.paper}> Label </Paper>{" "}
+          </Grid>{" "}
           <Grid item xs>
-            <Paper className={classes.paper}>Label</Paper>
-          </Grid>
-        </Grid>
+            <Paper className={classes.paper}> Label </Paper>{" "}
+          </Grid>{" "}
+        </Grid>{" "}
         <Grid container spacing={3}>
           <Grid item xs>
-            <Paper className={classes.paper}>xs</Paper>
-          </Grid>
+            <Paper className={classes.paper}> xs </Paper>{" "}
+          </Grid>{" "}
           <Grid item xs>
-            <Paper className={classes.paper}>xs</Paper>
-          </Grid>
-        </Grid>
+            <Paper className={classes.paper}> xs </Paper>{" "}
+          </Grid>{" "}
+        </Grid>{" "}
         <Grid container spacing={3}>
           <Grid item xs>
-            <Paper className={classes.paper}>Label</Paper>
-          </Grid>
+            <Paper className={classes.paper}> Label </Paper>{" "}
+          </Grid>{" "}
           <Grid item xs>
-            <Paper className={classes.paper}>Label</Paper>
-          </Grid>
-        </Grid>
+            <Paper className={classes.paper}> Label </Paper>{" "}
+          </Grid>{" "}
+        </Grid>{" "}
         <Grid container spacing={3}>
           <Grid item xs>
-            <Paper className={classes.paper}>xs</Paper>
-          </Grid>
+            <Paper className={classes.paper}> xs </Paper>{" "}
+          </Grid>{" "}
           <Grid item xs>
-            <Paper className={classes.paper}>xs</Paper>
-          </Grid>
-        </Grid>
+            <Paper className={classes.paper}> xs </Paper>{" "}
+          </Grid>{" "}
+        </Grid>{" "}
+        <Grid container spacing={3}>
+          <Grid item xs style={{ height: 200 }}>
+            <Nivo />
+          </Grid>{" "}
+        </Grid>{" "}
       </div>
     );
   }

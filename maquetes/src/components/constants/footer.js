@@ -6,5 +6,6 @@ import {
 export const classes = makeStyles(theme => ({
     root: {
         width: 500,
+        backgroundColor: theme.palette.background.paper,
     }
 }));

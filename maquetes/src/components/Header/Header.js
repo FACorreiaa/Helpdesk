@@ -7,6 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
+import Container from "@material-ui/core/Container";
 
 import IconButton from "@material-ui/core/IconButton";
 import SearchIcon from "@material-ui/icons/Search";
@@ -50,9 +51,8 @@ const PageShell = (Page, previous) => {
         transitionLeaveTimeout={600}
         transitionName={props.match.path === "/one" ? "SlideIn" : "SlideOut"}
       >
-        {console.log(props)}
-        <Page {...props} />
-      </CSSTransitionGroup>
+        {console.log(props)} <Page {...props} />{" "}
+      </CSSTransitionGroup>{" "}
     </div>
   );
 };
@@ -68,37 +68,46 @@ export default function Header() {
     <div className={classes.root}>
       <AppBar position="static">
         <Tabs value={value} onChange={handleChange} centered>
+          {" "}
           {/* <Tabs value={value} onChange={handleChange}>
-          {sections.map(section => (
-            <Tab label={section} />
-          ))}
-        </Tabs> */}
+                {sections.map(section => (
+                  <Tab label={section} />
+                ))}
+              </Tabs> */}{" "}
           <Tab label="Indicadores Globais" />
           <Tab label="Indicadores Colaboradores" />
           <Tab label="Indicadores Produto" />
           <Tab label="Indicadores Temporais" />
-        </Tabs>
-      </AppBar>
+        </Tabs>{" "}
+      </AppBar>{" "}
       {value === 0 && (
         <TabContainer>
-          <Global />
+          <Container maxWidth="sm" style={{ overflowY: `hidden` }}>
+            <Global />
+          </Container>{" "}
         </TabContainer>
-      )}
+      )}{" "}
       {value === 1 && (
         <TabContainer>
-          <Colaborador />
+          <Container maxWidth="xl">
+            <Colaborador />
+          </Container>
         </TabContainer>
-      )}
+      )}{" "}
       {value === 2 && (
         <TabContainer>
-          <Produto />
+          <Container maxWidth="lg">
+            <Produto />
+          </Container>
         </TabContainer>
-      )}
+      )}{" "}
       {value === 3 && (
         <TabContainer>
-          <Temporais />
+          <Container maxWidth="xl">
+            <Temporais />
+          </Container>
         </TabContainer>
-      )}
+      )}{" "}
     </div>
   );
 }

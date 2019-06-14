@@ -15,6 +15,7 @@ export const classes = makeStyles(theme => ({
     container: {
         display: 'flex',
         flexWrap: 'wrap',
+        overflowY: `hidden`,
     },
     textField: {
         marginLeft: theme.spacing(1),
