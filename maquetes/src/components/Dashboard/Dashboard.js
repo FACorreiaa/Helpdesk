@@ -8,7 +8,6 @@ export class Dashboard extends Component {
     return (
       <>
         <Header />
-        <Footer />
       </>
     );
   }

@@ -10,10 +10,7 @@ import Colab2 from "../Graphs/colab_example_v2";
 export class Colaborador extends Component {
   render() {
     return (
-      <div
-        className={classes.root}
-        style={{ overflowY: `hidden`, height: `100%` }}
-      >
+      <div className={classes.root}>
         <Grid container spacing={3}>
           <Grid item xs>
             <form className={classes.container} noValidate>

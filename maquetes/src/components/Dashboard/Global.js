@@ -104,8 +104,8 @@ export class Global extends Component {
             <Paper className={classes.paper}> xs </Paper>{" "}
           </Grid>{" "}
         </Grid>{" "}
-        <Grid container spacing={3}>
-          <Grid item xs style={{ height: 300 }}>
+        <Grid container spacing={4}>
+          <Grid item xs style={{ height: 400 }}>
             <Nivo />
           </Grid>{" "}
         </Grid>{" "}
