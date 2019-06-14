@@ -66,7 +66,7 @@ export default function Header() {
 
   return (
     <div className={classes.root}>
-      <AppBar position="static">
+      <AppBar position="sticky">
         <Tabs value={value} onChange={handleChange} centered>
           {" "}
           {/* <Tabs value={value} onChange={handleChange}>
@@ -82,14 +82,14 @@ export default function Header() {
       </AppBar>{" "}
       {value === 0 && (
         <TabContainer>
-          <Container maxWidth="sm" style={{ overflowY: `hidden` }}>
+          <Container maxWidth="sm">
             <Global />
           </Container>{" "}
         </TabContainer>
       )}{" "}
       {value === 1 && (
         <TabContainer>
-          <Container maxWidth="xl">
+          <Container maxWidth="sm">
             <Colaborador />
           </Container>
         </TabContainer>
