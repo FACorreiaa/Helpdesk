@@ -105,7 +105,7 @@ export class Global extends Component {
           </Grid>{" "}
         </Grid>{" "}
         <Grid container spacing={3}>
-          <Grid item xs style={{ height: 200 }}>
+          <Grid item xs style={{ height: 300 }}>
             <Nivo />
           </Grid>{" "}
         </Grid>{" "}
