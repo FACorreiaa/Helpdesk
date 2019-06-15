@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { HashRouter, Switch, Route } from "react-router-dom";
 import Home from "./Login/Home";
 import Login from "./Login/Login";
 import Protected from "./Login/Protected";
@@ -9,7 +9,7 @@ import "typeface-roboto";
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Switch>
         <Route path="/Dashboard" component={Dashboard} />{" "}
         <Route path="/Login" component={Login} />{" "}
@@ -18,7 +18,7 @@ function App() {
           <Route path="/Protected" component={Protected} />{" "}
         </Auth>{" "}
       </Switch>{" "}
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 

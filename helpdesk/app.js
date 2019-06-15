@@ -14,7 +14,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var statsRouter = require('./routes/stats');
 var votesRouter = require('./routes/votes');
-
+var dashRouter = require('./routes/index');
 //ADICIONEI
 require('dotenv').config()
 //Configure mongoose's promise to global promise
@@ -99,6 +99,6 @@ app.use((err, req, res) => {
   });
 });
 
-app.listen(8000, () => console.log('Server running on http://localhost:8000/'));
+app.listen(3000, () => console.log('Server running on http://localhost:3000/'));
 
 module.exports = app;
