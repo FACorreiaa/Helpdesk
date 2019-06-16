@@ -11,12 +11,13 @@ import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { classes } from "../constants/login";
 import axios from "axios";
 
-export class Login extends Component {
+export class Signup extends Component {
   constructor(props) {
     super(props);
     this.state = {
       email: "",
       password: "",
+      // repeatPassword: "",
       errorText: ""
     };
 
@@ -30,18 +31,35 @@ export class Login extends Component {
     });
   }
 
+  // componentDidMount() {
+  //   // custom rule will have name 'isPasswordMatch'
+  //   ValidatorForm.addValidationRule("isPasswordMatch", value => {
+  //     if (value !== this.state.password) {
+  //       return false;
+  //     }
+  //     return true;
+  //   });
+  // }
+
+  // componentWillUnmount() {
+  //   // remove rule when it is not needed
+  //   ValidatorForm.removeValidationRule("isPasswordMatch");
+  // }
+
   submit(e) {
     e.preventDefault();
     axios
-      .get("http://localhost:3000/api/users/current", {
+      .post("http://localhost:3000/api/users", {
         user: {
           email: this.state.email,
           password: this.state.password
         }
       })
       .then(res => {
+        debugger;
         localStorage.setItem("cool-jwt", res.data.user.token);
         console.log(res.data.user.token);
+        this.props.history.push("/Login");
       });
   }
 
@@ -57,7 +75,7 @@ export class Login extends Component {
               className={classes.bigAvatar}
             />{" "}
             <Typography component="h1" variant="h5">
-              Sign in
+              Sign up
             </Typography>{" "}
             <ValidatorForm
               ref="form"
@@ -71,7 +89,7 @@ export class Login extends Component {
                 required
                 fullWidth
                 id="email"
-                label="Email Address"
+                label="Insert your email"
                 name="email"
                 autoComplete="email"
                 autoFocus
@@ -86,7 +104,7 @@ export class Login extends Component {
                 required
                 fullWidth
                 name="password"
-                label="Password"
+                label="Insert your Password"
                 type="password"
                 id="password"
                 autoComplete="current-password"
@@ -96,6 +114,23 @@ export class Login extends Component {
                 validators={["required"]}
                 errorMessages={["this field is required"]}
               />{" "}
+              {/* <TextValidator
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Repeat your Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                onChange={e => this.change(e)}
+                value={this.state.repeatPassword}
+                onBlur={this.isDisabled}
+                validators={["isPasswordMatch", "required"]}
+                errorMessages={["password mismatch", "this field is required"]}
+                value={this.state.repeatPassword}
+              />{" "} */}
               <Button
                 type="submit"
                 fullWidth
@@ -105,18 +140,6 @@ export class Login extends Component {
               >
                 Submit{" "}
               </Button>{" "}
-              <Grid container>
-                <Grid item xs>
-                  <Link href="#" variant="body2">
-                    Forgot password?
-                  </Link>
-                </Grid>
-                <Grid item>
-                  <Link href="#" variant="body2">
-                    {"Don't have an account? Sign Up"}
-                  </Link>
-                </Grid>
-              </Grid>
             </ValidatorForm>{" "}
           </div>{" "}
         </Container>{" "}
@@ -125,4 +148,4 @@ export class Login extends Component {
   }
 }
 
-export default Login;
+export default Signup;

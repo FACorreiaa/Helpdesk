@@ -1,6 +1,4 @@
-import React, {
-  Component
-} from "react";
+import React, { Component } from "react";
 // Import fusioncharts.js files from fusioncharts module
 import FusionCharts from "fusioncharts";
 // Import the timeseries file from fusioncharts module
@@ -31,7 +29,7 @@ class Avg extends Component {
       timeseriesDs: {
         type: "timeseries",
         renderAt: "container",
-        width: "500",
+        width: "700",
         height: "400",
         dataSource: {
           chart: {
@@ -40,13 +38,15 @@ class Avg extends Component {
           caption: {
             text: "Média"
           },
-          yAxis: [{
-            plot: {
-              value: "Daily Visitors",
-              type: "area"
-            },
-            title: "Daily Visitors (in thousand)"
-          }],
+          yAxis: [
+            {
+              plot: {
+                value: "Daily Visitors",
+                type: "area"
+              },
+              title: "Daily Visitors (in thousand)"
+            }
+          ],
           // Initially data is set as null
           data: null
         }
@@ -82,14 +82,10 @@ class Avg extends Component {
   }
 
   render() {
-    return ( <
-      div className = "App" >
-      <
-      ReactFC {
-        ...this.state.timeseriesDs
-      }
-      /> <
-      /div>
+    return (
+      <div className="App">
+        <ReactFC {...this.state.timeseriesDs} />{" "}
+      </div>
     );
   }
 }

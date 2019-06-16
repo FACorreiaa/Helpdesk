@@ -46,66 +46,97 @@ export class Global extends Component {
         </Grid>
         <Grid container spacing={3}>
           <Grid item xs>
-            <Paper className={classes.paper}> Label </Paper>{" "}
+            <TextField
+              disabled
+              id="outlined-disabled"
+              label="Total Pedidos"
+              defaultValue="Hello World"
+              className={classes.textField}
+              margin="normal"
+              variant="outlined"
+            />
           </Grid>{" "}
           <Grid item xs>
-            <Paper className={classes.paper}> Label </Paper>{" "}
+            <TextField
+              disabled
+              id="outlined-disabled"
+              label="% pedidos não avaliados"
+              defaultValue="Hello World"
+              className={classes.textField}
+              margin="normal"
+              variant="outlined"
+            />
           </Grid>{" "}
           <Grid item xs>
-            <Paper className={classes.paper}> Label </Paper>{" "}
-          </Grid>{" "}
-        </Grid>{" "}
-        <Grid container spacing={3}>
-          <Grid item xs>
-            <Paper className={classes.paper} variant="inherit">
-              Resultado{" "}
-            </Paper>{" "}
-          </Grid>{" "}
-          <Grid item xs>
-            <Paper className={classes.paper} variant="srOnly">
-              Resultado{" "}
-            </Paper>{" "}
-          </Grid>{" "}
-          <Grid item xs>
-            <Paper className={classes.paper} variant="caption">
-              Resultado{" "}
-            </Paper>{" "}
-          </Grid>{" "}
-        </Grid>{" "}
-        <Grid container spacing={3}>
-          <Grid item xs>
-            <Paper className={classes.paper}> Label </Paper>{" "}
-          </Grid>{" "}
-          <Grid item xs>
-            <Paper className={classes.paper}> Label </Paper>{" "}
-          </Grid>{" "}
-        </Grid>{" "}
-        <Grid container spacing={3}>
-          <Grid item xs>
-            <Paper className={classes.paper}> xs </Paper>{" "}
-          </Grid>{" "}
-          <Grid item xs>
-            <Paper className={classes.paper}> xs </Paper>{" "}
+            <TextField
+              disabled
+              id="outlined-disabled"
+              label="Tempo médio de resposta"
+              defaultValue="Hello World"
+              className={classes.textField}
+              margin="normal"
+              variant="outlined"
+            />
           </Grid>{" "}
         </Grid>{" "}
         <Grid container spacing={3}>
           <Grid item xs>
-            <Paper className={classes.paper}> Label </Paper>{" "}
+            <TextField
+              disabled
+              id="outlined-disabled"
+              label="Avaliação média do Serviço"
+              defaultValue="Hello World"
+              className={classes.textField}
+              margin="normal"
+              variant="outlined"
+            />
           </Grid>{" "}
+          <Grid item xs />
           <Grid item xs>
-            <Paper className={classes.paper}> Label </Paper>{" "}
+            <TextField
+              disabled
+              id="outlined-disabled"
+              label="Desvio padrão votações"
+              defaultValue="Hello World"
+              className={classes.textField}
+              margin="normal"
+              variant="outlined"
+            />
           </Grid>{" "}
-        </Grid>{" "}
+        </Grid>
         <Grid container spacing={3}>
           <Grid item xs>
-            <Paper className={classes.paper}> xs </Paper>{" "}
+            <TextField
+              disabled
+              id="outlined-disabled"
+              label="Avaliação média do Serviço"
+              defaultValue="Hello World"
+              className={classes.textField}
+              margin="normal"
+              variant="outlined"
+            />
           </Grid>{" "}
+          <Grid item xs />
           <Grid item xs>
-            <Paper className={classes.paper}> xs </Paper>{" "}
+            <TextField
+              disabled
+              id="outlined-disabled"
+              label="Desvio padrão votações"
+              defaultValue="Hello World"
+              className={classes.textField}
+              margin="normal"
+              variant="outlined"
+            />
           </Grid>{" "}
         </Grid>{" "}
         <Grid container spacing={4}>
-          <Grid item xs style={{ height: 400 }}>
+          <Grid
+            item
+            xs
+            style={{
+              height: 400
+            }}
+          >
             <Nivo />
           </Grid>{" "}
         </Grid>{" "}

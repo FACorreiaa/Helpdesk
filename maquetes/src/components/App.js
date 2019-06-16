@@ -5,6 +5,7 @@ import Login from "./Login/Login";
 import Protected from "./Login/Protected";
 import Auth from "./Login/Auth";
 import Dashboard from "./Dashboard/Dashboard";
+import Signup from "./Login/Signup";
 import "typeface-roboto";
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
         <Route path="/Dashboard" component={Dashboard} />{" "}
         <Route path="/Login" component={Login} />{" "}
         <Route path="/" exact component={Home} />{" "}
+        <Route path="/Signup" component={Signup} />
         <Auth>
           <Route path="/Protected" component={Protected} />{" "}
         </Auth>{" "}

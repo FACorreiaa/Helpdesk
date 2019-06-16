@@ -15,11 +15,11 @@ export class Auth extends Component {
   componentDidMount() {
     const jwt = getJWT();
     if (!jwt) {
-      this.props.history.push("/Login");
+      this.props.history.push("/Signup");
     }
 
     axios
-      .get("http://localhost:8000/api/users/current", {
+      .get("http://localhost:3000/api/users/current", {
         headers: {
           Authorization: `Token ${jwt}`
         }

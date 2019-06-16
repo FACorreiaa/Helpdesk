@@ -82,14 +82,14 @@ export default function Header() {
       </AppBar>{" "}
       {value === 0 && (
         <TabContainer>
-          <Container maxWidth="sm">
+          <Container maxWidth="lg">
             <Global />
           </Container>{" "}
         </TabContainer>
       )}{" "}
       {value === 1 && (
         <TabContainer>
-          <Container maxWidth="sm">
+          <Container maxWidth="lg">
             <Colaborador />
           </Container>
         </TabContainer>
