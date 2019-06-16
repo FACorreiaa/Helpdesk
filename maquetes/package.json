@@ -2,7 +2,6 @@
   "name": "maquetes",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:3000",
   "dependencies": {
     "@material-ui/core": "^4.1.0",
     "@material-ui/icons": "^4.1.0",
@@ -10,11 +9,13 @@
     "@nivo/line": "^0.59.0",
     "@nivo/sankey": "^0.59.0",
     "axios": "^0.19.0",
+    "classnames": "^2.2.6",
     "fusioncharts": "^3.13.5-sr.1",
     "highcharts": "^7.1.2",
     "i18next": "^17.0.3",
     "i18next-browser-languagedetector": "^3.0.1",
     "i18next-xhr-backend": "^3.0.0",
+    "jwt-decode": "^2.2.0",
     "react": "^16.8.6",
     "react-addons-css-transition-group": "^15.6.2",
     "react-dom": "^16.8.6",
@@ -22,8 +23,11 @@
     "react-i18next": "^9.0.10",
     "react-jsx-highcharts": "^3.6.0",
     "react-material-ui-form-validator": "^2.0.9",
+    "react-redux": "^7.1.0",
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.0.1",
+    "redux": "^4.0.1",
+    "redux-thunk": "^2.3.0",
     "typeface-roboto": "0.0.54"
   },
   "scripts": {
@@ -32,6 +36,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "proxy": "http://localhost:3000",
   "eslintConfig": {
     "extends": "react-app"
   },

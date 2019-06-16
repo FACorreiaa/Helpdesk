@@ -1,31 +1,38 @@
-const config = require('./config.js');
-const bodyParser = require('body-parser');
-const session = require('express-session');
-const cors = require('cors');
-const mongoose = require('mongoose');
-const errorHandler = require('errorhandler');
+const config = require("./config.js");
+const bodyParser = require("body-parser");
+const session = require("express-session");
+const cors = require("cors");
+const mongoose = require("mongoose");
+const errorHandler = require("errorhandler");
+const passport = require("passport");
 
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+var createError = require("http-errors");
+var express = require("express");
+var path = require("path");
+var cookieParser = require("cookie-parser");
+var logger = require("morgan");
 
-var indexRouter = require('./routes/index');
-var statsRouter = require('./routes/stats');
-var votesRouter = require('./routes/votes');
-var dashRouter = require('./routes/index');
+const usersJWT = require("../helpdesk/helpers/login/routes/api/users");
+
+var indexRouter = require("./routes/index");
+var statsRouter = require("./routes/stats");
+var votesRouter = require("./routes/votes");
+var dashRouter = require("./routes/index");
+
 //ADICIONEI
-require('dotenv').config()
+require("dotenv").config();
 //Configure mongoose's promise to global promise
 mongoose.promise = global.Promise;
 
 //Configure isProduction variable
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === "production";
 console.log(process.env.NODE_ENV);
 
 var app = express();
-app.set('view engine', 'ejs');
+app.set("view engine", "ejs");
+// Passport middleware
+app.use(passport.initialize());
+// Passport config
 
 //COMENTEI
 // // Connecting to the database
@@ -38,41 +45,40 @@ app.set('view engine', 'ejs');
 //   process.exit();
 // });
 
-
-
 //Configure our app
 app.use(cors());
-app.use(require('morgan')('dev'));
-app.use(bodyParser.urlencoded({
-  extended: false
-}));
+app.use(require("morgan")("dev"));
+app.use(
+  bodyParser.urlencoded({
+    extended: false
+  })
+);
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(session({
-  secret: 'passport-tutorial',
-  cookie: {
-    maxAge: 60000
-  },
-  resave: false,
-  saveUninitialized: false
-}));
+app.use(express.static(path.join(__dirname, "public")));
+app.use(
+  session({
+    secret: "passport-tutorial",
+    cookie: {
+      maxAge: 60000
+    },
+    resave: false,
+    saveUninitialized: false
+  })
+);
 
 if (!isProduction) {
   app.use(errorHandler());
 }
 
 //Configure Mongoose
-mongoose.connect('mongodb://localhost/helpdesk');
-mongoose.set('debug', true);
+mongoose.connect("mongodb://localhost/helpdesk");
+mongoose.set("debug", true);
 
-//Adicionei
-require('./helpers/login/models/Users');
-require('./helpers/login/config/passport');
-app.use(require('./helpers/login/routes'));
-
-app.use('/', indexRouter);
-app.use('/stats', statsRouter);
-app.use('/votes', votesRouter);
+app.use("/", indexRouter);
+app.use("/stats", statsRouter);
+app.use("/votes", votesRouter);
+// Routes
+app.use("/api/users", usersJWT);
 
 //Error handlers & middlewares
 if (!isProduction) {
@@ -82,8 +88,8 @@ if (!isProduction) {
     res.json({
       errors: {
         message: err.message,
-        error: err,
-      },
+        error: err
+      }
     });
   });
 }
@@ -94,11 +100,11 @@ app.use((err, req, res) => {
   res.json({
     errors: {
       message: err.message,
-      error: {},
-    },
+      error: {}
+    }
   });
 });
 
-app.listen(3000, () => console.log('Server running on http://localhost:3000/'));
+app.listen(3000, () => console.log("Server running on http://localhost:3000/"));
 
 module.exports = app;
