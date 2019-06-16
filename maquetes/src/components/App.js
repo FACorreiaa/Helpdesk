@@ -1,11 +1,11 @@
 import React from "react";
 import { HashRouter, Switch, Route } from "react-router-dom";
 import Home from "./Login/Home";
-import Login from "./Login/Login";
+import Login from "./auth/Login";
 import Protected from "./Login/Protected";
 import Auth from "./Login/Auth";
 import Dashboard from "./Dashboard/Dashboard";
-import Signup from "./Login/Signup";
+import Signup from "./auth/Register";
 import "typeface-roboto";
 
 function App() {
