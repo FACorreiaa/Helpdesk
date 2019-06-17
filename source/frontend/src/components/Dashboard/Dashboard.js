@@ -10,8 +10,7 @@ export class Dashboard extends Component {
   render() {
     return (
       <>
-        <Header />
-        <Footer />
+        <Header /> {/* <Footer /> */}{" "}
       </>
     );
   }
