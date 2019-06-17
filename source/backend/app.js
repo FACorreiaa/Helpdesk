@@ -12,7 +12,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
-const usersJWT = require("../helpdesk/helpers/login/routes/api/users");
+const usersJWT = require("./helpers/login/routes/api/users");
 
 var indexRouter = require("./routes/index");
 var statsRouter = require("./routes/stats");

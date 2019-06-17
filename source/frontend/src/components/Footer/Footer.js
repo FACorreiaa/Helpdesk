@@ -6,57 +6,50 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import BottomNavigation from "@material-ui/core/BottomNavigation";
-import { classes } from "../constants/footer";
 import BottomNavigationAction from "@material-ui/core/BottomNavigationAction";
 import RestoreIcon from "@material-ui/icons/Restore";
+import { makeStyles } from "@material-ui/core/styles";
+import Link from "@material-ui/core/Link";
 
-function TabContainer(props) {
+function MadeWithLove() {
   return (
-    <Typography
-      component="div"
-      style={{
-        padding: 8 * 3
-      }}
-    >
-      {" "}
-      {props.children}{" "}
+    <Typography variant="body2" color="textSecondary">
+      {"For "}
+      <Link color="inherit" href="https://material-ui.com/">
+        Programação Web
+      </Link>
+      {" team."}
     </Typography>
   );
 }
 
-TabContainer.propTypes = {
-  children: PropTypes.node.isRequired
-};
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: "flex",
+    flexDirection: "column",
+    minHeight: "10vh"
+  },
+
+  footer: {
+    padding: theme.spacing(0),
+    marginTop: "auto",
+    backgroundColor: "#3f51b5"
+  }
+}));
 
 export default function Footer() {
-  const [value, setValue] = React.useState(0);
-  const footerStyle = {
-    //backgroundColor: `#3f51b5`
-    //flexGrow: 1,
-    width: `calc(85% + 100px)`,
-    position: "fixed",
-    bottom: 0
-  };
+  const classes = useStyles();
+
   return (
     <>
-      <BottomNavigation
-        value={value}
-        onChange={(event, newValue) => {
-          setValue(newValue);
-        }}
-        style={footerStyle}
-        showLabels
-      >
-        <BottomNavigationAction
-          label="IPCA 2019 @ MEI"
-          icon={<RestoreIcon />}
-        />
-
-        <BottomNavigationAction
-          label="Programação Web"
-          icon={<RestoreIcon />}
-        />
-      </BottomNavigation>
+      <div className={classes.root}>
+        <footer className={classes.footer}>
+          <Container maxWidth="sm">
+            <Typography variant="body1"> IPCA 2019 @ MEI </Typography>{" "}
+            <MadeWithLove />
+          </Container>{" "}
+        </footer>{" "}
+      </div>{" "}
     </>
   );
 }
