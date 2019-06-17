@@ -8,7 +8,8 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Button from "@material-ui/core/Button";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Container from "@material-ui/core/Container";
-
+import { connect } from "react-redux";
+import { logoutUser } from "../../actions/authActions";
 import IconButton from "@material-ui/core/IconButton";
 import SearchIcon from "@material-ui/icons/Search";
 import Link from "@material-ui/core/Link";
@@ -57,11 +58,16 @@ const PageShell = (Page, previous) => {
   );
 };
 
-export default function Header() {
+const Header = props => {
   const [value, setValue] = React.useState(0);
 
   function handleChange(event, newValue) {
     setValue(newValue);
+  }
+
+  function onLogoutClick(e) {
+    e.preventDefault();
+    props.logoutUser();
   }
 
   return (
@@ -78,6 +84,9 @@ export default function Header() {
           <Tab label="Indicadores Colaboradores" />
           <Tab label="Indicadores Produto" />
           <Tab label="Indicadores Temporais" />
+          <Button color="inherit" onClick={onLogoutClick.bind(this)}>
+            Logout
+          </Button>
         </Tabs>{" "}
       </AppBar>{" "}
       {value === 0 && (
@@ -110,4 +119,19 @@ export default function Header() {
       )}{" "}
     </div>
   );
-}
+};
+
+//export default Dashboard;
+Header.propTypes = {
+  logoutUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired
+};
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+export default connect(
+  mapStateToProps,
+  {
+    logoutUser
+  }
+)(Header);

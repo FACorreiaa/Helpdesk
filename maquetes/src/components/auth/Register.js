@@ -1,69 +1,68 @@
 import React, { Component } from "react";
+import { Link, withRouter } from "react-router-dom";
+import { connect } from "react-redux";
+import { registerUser } from "../../actions/authActions";
+import PropTypes from "prop-types";
+
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
-import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import { classes } from "../constants/login";
+import classnames from "classnames";
+
 import axios from "axios";
 
 export class Signup extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      name: "",
       email: "",
       password: "",
-      // repeatPassword: "",
-      errorText: ""
+      password2: "",
+      errors: {}
     };
-
-    this.change = this.change.bind(this);
-    this.submit = this.submit.bind(this);
   }
 
-  change(e) {
-    this.setState({
-      [e.target.name]: e.target.value
-    });
-  }
-
-  // componentDidMount() {
-  //   // custom rule will have name 'isPasswordMatch'
-  //   ValidatorForm.addValidationRule("isPasswordMatch", value => {
-  //     if (value !== this.state.password) {
-  //       return false;
-  //     }
-  //     return true;
-  //   });
-  // }
-
-  // componentWillUnmount() {
-  //   // remove rule when it is not needed
-  //   ValidatorForm.removeValidationRule("isPasswordMatch");
-  // }
-
-  submit(e) {
-    e.preventDefault();
-    axios
-      .post("http://localhost:3000/api/users", {
-        user: {
-          email: this.state.email,
-          password: this.state.password
-        }
-      })
-      .then(res => {
-        debugger;
-        localStorage.setItem("cool-jwt", res.data.user.token);
-        console.log(res.data.user.token);
-        this.props.history.push("/Login");
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.errors) {
+      this.setState({
+        errors: nextProps.errors
       });
+    }
+  }
+
+  onChange = e => {
+    this.setState({
+      [e.target.id]: e.target.value
+    });
+  };
+  onSubmit = e => {
+    e.preventDefault();
+    const newUser = {
+      name: this.state.name,
+      email: this.state.email,
+      password: this.state.password,
+      password2: this.state.password2
+    };
+    console.log(newUser);
+    this.props.registerUser(newUser, this.props.history);
+  };
+
+  componentDidMount() {
+    // If logged in and user navigates to Register page, should redirect them to dashboard
+    if (this.props.auth.isAuthenticated) {
+      this.props.history.push("/Dashboard");
+    }
   }
 
   render() {
+    const { errors } = this.state;
     return (
       <div>
         <Container component="main" maxWidth="xs">
@@ -75,14 +74,31 @@ export class Signup extends Component {
               className={classes.bigAvatar}
             />{" "}
             <Typography component="h1" variant="h5">
-              Sign up
+              Sign up{" "}
             </Typography>{" "}
             <ValidatorForm
               ref="form"
               className={classes.form}
               noValidate
-              onSubmit={e => this.submit(e)}
+              onSubmit={this.onSubmit}
             >
+              <TextValidator
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                type="text"
+                id="name"
+                label="Insert your name"
+                name="name"
+                autoComplete="name"
+                autoFocus
+                onChange={this.onChange}
+                value={this.state.name}
+                error={errors.name}
+                validators={["required"]}
+                errorMessages={["this field is required"]}
+              />{" "}
               <TextValidator
                 variant="outlined"
                 margin="normal"
@@ -93,8 +109,9 @@ export class Signup extends Component {
                 name="email"
                 autoComplete="email"
                 autoFocus
-                onChange={e => this.change(e)}
+                onChange={this.onChange}
                 value={this.state.email}
+                error={errors.email}
                 validators={["required"]}
                 errorMessages={["this field is required"]}
               />{" "}
@@ -108,13 +125,13 @@ export class Signup extends Component {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                onChange={e => this.change(e)}
+                onChange={this.onChange}
                 value={this.state.password}
-                onBlur={this.isDisabled}
+                error={errors.password}
                 validators={["required"]}
                 errorMessages={["this field is required"]}
               />{" "}
-              {/* <TextValidator
+              <TextValidator
                 variant="outlined"
                 margin="normal"
                 required
@@ -122,15 +139,14 @@ export class Signup extends Component {
                 name="password"
                 label="Repeat your Password"
                 type="password"
-                id="password"
+                id="password2"
                 autoComplete="current-password"
-                onChange={e => this.change(e)}
-                value={this.state.repeatPassword}
-                onBlur={this.isDisabled}
-                validators={["isPasswordMatch", "required"]}
-                errorMessages={["password mismatch", "this field is required"]}
-                value={this.state.repeatPassword}
-              />{" "} */}
+                onChange={this.onChange}
+                value={this.state.password2}
+                error={errors.password2}
+                validators={["required"]}
+                errorMessages={["this field is required"]}
+              />{" "}
               <Button
                 type="submit"
                 fullWidth
@@ -140,6 +156,12 @@ export class Signup extends Component {
               >
                 Submit{" "}
               </Button>{" "}
+              <Grid item>
+                <Link href="#/Login" variant="body2">
+                  {" "}
+                  {"Already have an account? Log in!"}{" "}
+                </Link>{" "}
+              </Grid>{" "}
             </ValidatorForm>{" "}
           </div>{" "}
         </Container>{" "}
@@ -148,4 +170,18 @@ export class Signup extends Component {
   }
 }
 
-export default Signup;
+Signup.propTypes = {
+  registerUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth,
+  errors: state.errors
+});
+
+export default connect(
+  mapStateToProps,
+  { registerUser }
+)(withRouter(Signup));

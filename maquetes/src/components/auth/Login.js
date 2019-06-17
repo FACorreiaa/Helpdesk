@@ -1,4 +1,7 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { loginUser } from "../../actions/authActions";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -17,35 +20,45 @@ export class Login extends Component {
     this.state = {
       email: "",
       password: "",
-      errorText: ""
+      errors: {}
     };
-
-    this.change = this.change.bind(this);
-    this.submit = this.submit.bind(this);
   }
 
-  change(e) {
-    this.setState({
-      [e.target.name]: e.target.value
-    });
-  }
-
-  submit(e) {
-    e.preventDefault();
-    axios
-      .get("http://localhost:3000/api/users/current", {
-        user: {
-          email: this.state.email,
-          password: this.state.password
-        }
-      })
-      .then(res => {
-        localStorage.setItem("cool-jwt", res.data.user.token);
-        console.log(res.data.user.token);
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.auth.isAuthenticated) {
+      this.props.history.push("/Dashboard"); // push user to dashboard when they login
+    }
+    if (nextProps.errors) {
+      this.setState({
+        errors: nextProps.errors
       });
+    }
+  }
+
+  onChange = e => {
+    this.setState({ [e.target.id]: e.target.value });
+  };
+
+  onSubmit = e => {
+    e.preventDefault();
+    const userData = {
+      email: this.state.email,
+      password: this.state.password
+    };
+    console.log(userData);
+    this.props.loginUser(userData); // since we handle the redirect within our component, we don't need to pass in this.props.history as a parameter
+  };
+
+  componentDidMount() {
+    // If logged in and user navigates to Login page, should redirect them to dashboard
+    if (this.props.auth.isAuthenticated) {
+      this.props.history.push("/Dashboard");
+    }
   }
 
   render() {
+    const { errors } = this.state;
+
     return (
       <div>
         <Container component="main" maxWidth="xs">
@@ -63,7 +76,7 @@ export class Login extends Component {
               ref="form"
               className={classes.form}
               noValidate
-              onSubmit={e => this.submit(e)}
+              onSubmit={this.onSubmit}
             >
               <TextValidator
                 variant="outlined"
@@ -71,12 +84,14 @@ export class Login extends Component {
                 required
                 fullWidth
                 id="email"
+                type="email"
                 label="Email Address"
                 name="email"
                 autoComplete="email"
                 autoFocus
-                onChange={e => this.change(e)}
+                onChange={this.onChange}
                 value={this.state.email}
+                error={errors.email}
                 validators={["required"]}
                 errorMessages={["this field is required"]}
               />{" "}
@@ -90,9 +105,9 @@ export class Login extends Component {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                onChange={e => this.change(e)}
+                onChange={this.onChange}
                 value={this.state.password}
-                onBlur={this.isDisabled}
+                error={errors.password}
                 validators={["required"]}
                 errorMessages={["this field is required"]}
               />{" "}
@@ -106,13 +121,13 @@ export class Login extends Component {
                 Submit{" "}
               </Button>{" "}
               <Grid container>
-                <Grid item xs>
+                {/* <Grid item xs>
                   <Link href="#" variant="body2">
                     Forgot password?
                   </Link>
-                </Grid>
+                </Grid> */}
                 <Grid item>
-                  <Link href="#" variant="body2">
+                  <Link href="#/Register" variant="body2">
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>
@@ -125,4 +140,16 @@ export class Login extends Component {
   }
 }
 
-export default Login;
+Login.propTypes = {
+  loginUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired
+};
+const mapStateToProps = state => ({
+  auth: state.auth,
+  errors: state.errors
+});
+export default connect(
+  mapStateToProps,
+  { loginUser }
+)(Login);
