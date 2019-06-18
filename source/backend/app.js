@@ -18,6 +18,14 @@ var indexRouter = require("./routes/index");
 var statsRouter = require("./routes/stats");
 var votesRouter = require("./routes/votes");
 var dashRouter = require("./routes/index");
+const cron = require('node-cron');
+const moment = require('moment');
+const issueService = require('./services/servicesBD/servicebd.issues');
+const usersService = require('./services/servicesBD/servicebd.users');
+const issueCreate = require('./controlers/Issue');
+const usersCreate = require('./controlers/User');
+const issuesRouter = require('./routes/issues');
+
 
 //ADICIONEI
 require("dotenv").config();
@@ -77,6 +85,8 @@ mongoose.set("debug", true);
 app.use("/", indexRouter);
 app.use("/stats", statsRouter);
 app.use("/votes", votesRouter);
+app.use('/issues', issuesRouter);
+
 // Routes
 app.use("/api/users", usersJWT);
 
@@ -106,5 +116,20 @@ app.use((err, req, res) => {
 });
 
 app.listen(3000, () => console.log("Server running on http://localhost:3000/"));
+
+cron.schedule('* * * * *', async () => {
+  console.log('---------------------');
+  console.log('Running Cron Job');
+  console.log('running a task every minute');
+
+  debugger;
+  const date = moment().subtract(5, 'minutes').toISOString(); // or format() - see below
+
+  const resIssue = await issueService.getIssueByDate(date);
+  issueCreate.createIssue(resIssue);
+  const resUser = await usersService.getForce();
+  usersCreate.createUser(resUser);
+
+});
 
 module.exports = app;

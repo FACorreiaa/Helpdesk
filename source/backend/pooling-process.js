@@ -15,13 +15,13 @@ function getDate(dateAfter) {
 //
 const {
     User
-} = require('./models/userModel');
+} = require('./models/User');
 const {
     Evaluation
 } = require('./models/evaluationModel');
 const {
     Issue
-} = require('./models/issueModel');
+} = require('./models/Issue');
 
 const config = require('./config');
 
@@ -151,7 +151,6 @@ async function getIssues(dateAfter) {
                 await dbIssue.save();
 
                 const dbEvaluation = new Evaluation({
-                    _id: issue.id,
                     //
                     // fields with default values
                     //
