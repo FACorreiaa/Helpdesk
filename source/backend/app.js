@@ -25,6 +25,8 @@ const usersService = require('./services/servicesBD/servicebd.users');
 const issueCreate = require('./controlers/Issue');
 const usersCreate = require('./controlers/User');
 const issuesRouter = require('./routes/issues');
+const usersRouter = require('./routes/users');
+
 
 
 //ADICIONEI
@@ -86,6 +88,7 @@ app.use("/", indexRouter);
 app.use("/stats", statsRouter);
 app.use("/votes", votesRouter);
 app.use('/issues', issuesRouter);
+app.use('/users', usersRouter);
 
 // Routes
 app.use("/api/users", usersJWT);
