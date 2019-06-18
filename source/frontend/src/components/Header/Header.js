@@ -84,6 +84,7 @@ const Header = props => {
           <Tab label="Indicadores Colaboradores" />
           <Tab label="Indicadores Produto" />
           <Tab label="Indicadores Temporais" />
+          {props.name}
           <Button color="inherit" onClick={onLogoutClick.bind(this)}>
             Logout{" "}
           </Button>{" "}
