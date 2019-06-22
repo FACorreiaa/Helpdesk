@@ -1,208 +1,234 @@
 /* eslint-disable no-console */
+const FORCED_EMAIL = "webprogwork@gmail.com";
 
-const axios = require('axios');
+const REDMINEAPI_BASE_URL = "https://redmine-mock-api.herokuapp.com/api/v1";
 
-const moment = require('moment');
+const API_BASE_URL = "http://localhost:3000";
 
-const mongoose = require('mongoose');
+const axios = require("axios");
 
-function getDate(dateAfter) {
-    return dateAfter ? moment(dateAfter).toISOString() : moment().subtract(1, 'minutes').toISOString();
-}
+const moment = require("moment");
+
+const mongoose = require("mongoose");
+
+require('dotenv').config()
 
 //
 // Models
 //
 const {
-    User
-} = require('./models/User');
-const {
-    Evaluation
-} = require('./models/evaluationModel');
-const {
-    Issue
-} = require('./models/Issue');
-
-const config = require('./config');
+  Issue
+} = require("./models/Issue");
 
 const {
-    sendEmailBySMTP
-} = require('./helpers/sendmail');
-//
-// projectName : "Helpdesk | CA Datacomm@Vectren"
-//
-function getProjectInfo(project) {
-    const r = project.name.slice(11).split('@');
-    return {
-        id: project.id,
-        product_name: r[0],
-        client_name: r[1]
-    };
-}
+  sendEmailBySMTP
+} = require("./helpers/sendmail");
 
 async function main() {
-    try {
-        console.log('starting...');
+  try {
+    console.log("starting...");
 
-        // Connecting to the database
-        await mongoose.connect(config.url, {
-            useNewUrlParser: true
-        }).then(() => {
-            console.log("Successfully connected to the database");
-        }).catch(err => {
-            console.log('Could not connect to the database. Exiting now...', err);
-            process.exit();
-        });
+    // Connecting to the database
+    // await mongoose
+    //   .connect(process.env.URI, {
+    //     useNewUrlParser: true
+    //   })
+    //   .then(() => {
+    //     console.log("Successfully connected to the database");
+    //   })
+    //   .catch(err => {
+    //     console.log("Could not connect to the database. Exiting now...", err);
+    //     process.exit();
+    //   });
 
-        console.log('connected to db');
+    console.log("connected to db");
 
-        //
-        // get all users
-        //
-        let res = await axios({
-            method: 'get',
-            url: 'https://redmine-mock-api.herokuapp.com/api/v1/users',
-            responseType: 'json'
-        });
-        console.log('users from endpoint');
-
-        const users = res.data;
-
-        //
-        // copy each user to local database
-        //
-        for (let user of users) {
-            try {
-                const dbUser = new User({
-                    _id: user.id,
-                    login: user.login,
-                    firstname: user.firstname,
-                    lastname: user.lastname,
-                    mail: user.mail,
-                    created_on: user.created_on,
-                    last_login_on: user.last_login_on
-                });
-
-                await User.findByIdAndUpdate(user.id, dbUser, {
-                    useFindAndModify: false,
-                    upsert: true
-                }).exec();
-            } catch (err) {
-                // caused by 
-                console.log(err);
-            }
-        }
-
-        let timer0 = setInterval(() => getIssues(getDate(process.argv[2])), 1000 * 15);
-
-    } catch (err) {
-        console.log('******ERROR********');
-        console.log(err);
-    }
+    //
+    // configure pooling timer
+    //
+    let timer0 = setInterval(() => {
+      getIssues(
+        moment()
+        .subtract(process.env.POOLING_DELTA_SECS, "seconds")
+        .toISOString()
+      );
+    }, 1000 * process.env.POOLING_DELTA_SECS);
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 main();
 
+async function getUserFromRAPI(uid, forced_mail) {
+  let url = `${REDMINEAPI_BASE_URL}/users/${uid}`;
+
+  if (forced_mail) url += `?forceMail=${forced_mail}`;
+
+  try {
+    let res = await axios({
+      method: "get",
+      url: url,
+      responseType: "json"
+    });
+    return res;
+  } catch (error) {
+    return new Error("getUserFromRAPI error");
+  }
+}
+
 async function getIssues(dateAfter) {
+  console.log("dateAfter", dateAfter);
 
-    const url = `https://redmine-mock-api.herokuapp.com/api/v1/issues?after=${dateAfter}`;
+  try {
+    //
+    // get issues new issues
+    //
+    let res = await axios({
+      method: "get",
+      url: `${REDMINEAPI_BASE_URL}/issues?after=${dateAfter}`,
+      responseType: "json"
+    });
 
-    try {
-        let res = await axios({
-            method: 'get',
-            url: url,
-            responseType: 'json'
+    const {
+      issues
+    } = res.data;
+
+    (() => {
+      let {
+        total_count,
+        offset,
+        limit
+      } = res.data;
+      console.log({
+        total_count,
+        offset,
+        limit
+      });
+    })();
+
+    for (let issue of issues) {
+      try {
+        //
+        // get assigned_to email
+        //
+        let res_assigned_to = await axios({
+          method: "get",
+          url: `${REDMINEAPI_BASE_URL}/users/${issue.assigned_to.id}`,
+          responseType: "json"
         });
 
-        const issues = res.data.issues;
-
-        (() => {
-            let {
-                total_count,
-                offset,
-                limit
-            } = res.data;
-            console.log({
-                total_count,
-                offset,
-                limit
-            });
-        })();
-
-        for (let issue of issues) {
-            try {
-                const dbIssue = new Issue({
-                    _id: issue.id,
-                    project: issue.project,
-                    tracker: issue.tracker,
-                    status: issue.status,
-                    priority: issue.priority,
-                    author: issue.author,
-                    assigned_to: issue.assigned_to,
-                    subject: issue.subject,
-                    description: issue.description,
-                    done_ratio: issue.done_ratio,
-                    start_date: issue.start_date,
-                    closed_on: issue.closed_on,
-                    created_on: issue.created_on,
-                    updated_on: issue.updated_on
-                });
-
-                await dbIssue.save();
-
-                const dbEvaluation = new Evaluation({
-                    //
-                    // fields with default values
-                    //
-                    // requested_on: {type: Date, default: new Date.now()}
-                    // evaluated_on: {type: Date, default: null},
-                    // score: {type: Number, default: 0}
-
-                    //
-                    // data from issue
-                    //
-                    project: getProjectInfo(issue.project),
-                    tracker: issue.tracker,
-                    priority: issue.priority,
-                    assigned_to: issue.assigned_to,
-                    created_on: new Date(issue.created_on),
-                    closed_on: new Date(issue.closed_on),
-
-
-                    // compute response_time
-                    response_time: (new Date(issue.closed_on) - new Date(issue.created_on))
-                });
-
-                await dbEvaluation.save();
-
-                //
-                // compose and send email to client
-                //
-                let message = `
-                    <h1><a href="http://127.0.0.1:3000/votes/${issue.id}/1">Vote 1</a></h1>
-                    <h1><a href="http://127.0.0.1:3000/votes/${issue.id}/2">Vote 2</a></h1>
-                    <h1><a href="http://127.0.0.1:3000/votes/${issue.id}/3">Vote 3</a></h1>
-                    <h1><a href="http://127.0.0.1:3000/votes/${issue.id}/4">Vote 4</a></h1>
-                    <h1><a href="http://127.0.0.1:3000/votes/${issue.id}/5">Vote 5</a></h1>
-                `;
-
-                await sendEmailBySMTP({
-                    subject: "vote this",
-                    message: message
-                });
-            } catch (err) {
-                console.log(err);
-            }
-        }
-    } catch (error) {
         //
-        // axios errors
+        // get author email
         //
-        if (error.response)
-            console.log('response error', error.response.status);
-        else if (error.request)
-            console.log('request error', error.request);
-        else
-            console.log('other error', error.message);
+        let res_author = await axios({
+          method: "get",
+          url: `${REDMINEAPI_BASE_URL}/users/${issue.author.id}`,
+          responseType: "json"
+        });
+
+        //
+        // extract product_name, client_name from project.name
+        //
+        const [product_name, client_name] = issue.project.name
+          .slice(11)
+          .split("@");
+
+        const project = {
+          id: issue.project.id,
+          product_name,
+          client_name
+        };
+
+        const dbIssue = new Issue({
+          //
+          // _id: default internal ObjectId
+          //
+          // fields with default values
+          //
+          // requested_on: {type: Date, default: new Date.now()}
+          // evaluated_on: {type: Date, default: null},
+          // score: {type: Number, default: 0}
+
+          //
+          // data from issue
+          //
+          project: project,
+          tracker: issue.tracker,
+          priority: issue.priority,
+
+          assigned_to: {
+            id: issue.assigned_to.id,
+            name: issue.assigned_to.name,
+            email: res_assigned_to.data.mail
+          },
+
+          author: {
+            id: issue.author.id,
+            name: issue.author.name,
+            email: res_author.data.mail
+          },
+
+          created_on: new Date(issue.created_on),
+          closed_on: new Date(issue.closed_on),
+
+          subject: issue.subject,
+          description: issue.description,
+
+          // compute response_time
+          response_time: new Date(issue.closed_on) - new Date(issue.created_on)
+        });
+
+        const newIssue = await dbIssue.save();
+
+        //
+        // compose and send email to client
+        //
+
+        let message = `
+                    <h2>TrackerID:${newIssue.tracker.name}<h2>
+                    <h2>Client:${newIssue.project.client_name}<h2>
+                    <h2>Product:${newIssue.project.product_name}<h2>
+                    <h2>Date of creation:${newIssue.created_on}</h2>
+                    <h2>Colaborator:${newIssue.assigned_to.name}</h2>
+                    <h2>Subject:</h2>
+                    <p>${newIssue.subject}<p>
+                    <h2>Description:</h2>
+                    <p>${newIssue.description}</p>
+                    <ul>
+                    <li><a href="${API_BASE_URL}/issues/${
+          newIssue.id
+        }/vote/1">Vote 1</a></li>
+                    <li><a href="${API_BASE_URL}/issues/${
+          newIssue.id
+        }/vote/2">Vote 2</a></li>
+                    <li><a href="${API_BASE_URL}/issues/${
+          newIssue.id
+        }/vote/3">Vote 3</a></li>
+                    <li><a href="${API_BASE_URL}/issues/${
+          newIssue.id
+        }/vote/4">Vote 4</a></li>
+                    <li><a href="${API_BASE_URL}/issues/${
+          newIssue.id
+        }/vote/5">Vote 5</a></li>
+                    </ul>`;
+
+        //console.log('*EMAIL*', message);
+
+        // await sendEmailBySMTP({
+        //   subject: "Helpdesk issue evaluation",
+        //   message: message
+        // });
+      } catch (err) {
+        console.log(err);
+      }
     }
+  } catch (error) {
+    //
+    // axios errors
+    //
+    if (error.response) console.log("response error", error.response.status);
+    else if (error.request) console.log("request error", error.request);
+    else console.log("other error", error.message);
+  }
 }

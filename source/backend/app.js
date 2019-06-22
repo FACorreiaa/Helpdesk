@@ -1,31 +1,16 @@
-const config = require("./config.js");
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const errorHandler = require("errorhandler");
 const passport = require("passport");
-
-var createError = require("http-errors");
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
-
+const express = require("express");
+const path = require("path");
 const usersJWT = require("./helpers/login/routes/api/users");
-
-var indexRouter = require("./routes/index");
-var statsRouter = require("./routes/stats");
-var votesRouter = require("./routes/votes");
-var dashRouter = require("./routes/index");
-const cron = require('node-cron');
-const moment = require('moment');
-const issueService = require('./services/servicesBD/servicebd.issues');
-const usersService = require('./services/servicesBD/servicebd.users');
-const issueCreate = require('./controlers/Issue');
-const usersCreate = require('./controlers/User');
+const indexRouter = require("./routes/index");
+const statsRouter = require("./routes/stats");
+const votesRouter = require("./routes/votes");
 const issuesRouter = require('./routes/issues');
-const usersRouter = require('./routes/users');
 const swaggerUI = require('swagger-ui-express');
 const YAML = require('yamljs');
 const swaggerDocument = YAML.load('swagger.yaml');
@@ -47,15 +32,15 @@ app.use(passport.initialize());
 // Passport config
 
 //COMENTEI
-// // Connecting to the database
-// mongoose.connect(config.url, {
-//   useNewUrlParser: true
-// }).then(() => {
-//   console.log("Successfully connected to the database");
-// }).catch(err => {
-//   console.log('Could not connect to the database. Exiting now...', err);
-//   process.exit();
-// });
+// Connecting to the database
+mongoose.connect(process.env.URI, {
+  useNewUrlParser: true
+}).then(() => {
+  console.log("Successfully connected to the database");
+}).catch(err => {
+  console.log('Could not connect to the database. Exiting now...', err);
+  process.exit();
+});
 
 //Configure our app
 app.use(cors());
@@ -83,7 +68,7 @@ if (!isProduction) {
 }
 
 //Configure Mongoose
-mongoose.connect("mongodb://localhost/helpdesk");
+//mongoose.connect("mongodb://localhost/helpdesk");
 mongoose.set("debug", true);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
@@ -91,7 +76,6 @@ app.use("/", indexRouter);
 app.use("/stats", statsRouter);
 app.use("/votes", votesRouter);
 app.use('/issues', issuesRouter);
-app.use('/users', usersRouter);
 
 // Routes
 app.use("/api/users", usersJWT);
@@ -110,32 +94,21 @@ if (!isProduction) {
   });
 }
 
-app.use((err, req, res) => {
-  res.status(err.status || 500);
-
-  res.json({
-    errors: {
-      message: err.message,
-      error: {}
-    }
-  });
-});
-
 app.listen(3000, () => console.log("Server running on http://localhost:3000/"));
 
-cron.schedule('* * * * *', async () => {
-  console.log('---------------------');
-  console.log('Running Cron Job');
-  console.log('running a task every minute');
+// cron.schedule('* * * * *', async () => {
+//   console.log('---------------------');
+//   console.log('Running Cron Job');
+//   console.log('running a task every minute');
 
-  debugger;
-  const date = moment().subtract(5, 'minutes').toISOString(); // or format() - see below
+//   debugger;
+//   const date = moment().subtract(5, 'minutes').toISOString(); // or format() - see below
 
-  const resIssue = await issueService.getIssueByDate(date);
-  issueCreate.createIssue(resIssue);
-  const resUser = await usersService.getForce();
-  usersCreate.createUser(resUser);
+//   const resIssue = await issueService.getIssueByDate(date);
+//   issueCreate.createIssue(resIssue);
+//   const resUser = await usersService.getForce();
+//   usersCreate.createUser(resUser);
 
-});
+// });
 
 module.exports = app;

@@ -1,43 +1,83 @@
 const mongoose = require('mongoose');
-var idvalidator = require('mongoose-id-validator');
-var Schema = mongoose.Schema;
 
-let issueSchema = new Schema({
-    id: Number,
+const issueSchema = new mongoose.Schema({
+    //
+    // same is as issue.id
+    //
+
+    // _id: {type: mongoose.Schema.Types.ObjectId, auto: true},
+
+    //
+    // evaluation date of creation
+    //
+    requested_on: {
+        type: Date,
+        default: new Date()
+    },
+
+    //
+    // client evaluation date
+    //
+    evaluated_on: {
+        type: Date,
+        default: null
+    },
+
+    //
+    // client evaluation score
+    //
+    // score = 0 => not avaliated 
+    // score = 1-5 => avaliated
+    score: {
+        type: Number,
+        default: 0
+    },
+
+    //
+    // original issue cache info
+    //
+
+    subject: String,
+
+    description: String,
+
     project: {
         id: Number,
-        name: String
+        product_name: String,
+        client_name: String
     },
+
     tracker: {
         id: Number,
         name: String
     },
-    status: {
-        id: Number,
-        name: String
-    },
+
     priority: {
         id: Number,
         name: String
     },
-    author: {
-        id: Number,
-        name: String
-    },
+
     assigned_to: {
         id: Number,
-        name: String
+        name: String,
+        email: String
     },
-    subject: String,
-    description: String,
-    start_date: String,
-    done_ratio: Number,
-    closed_on: String,
-    created_on: String,
-    updated_on: String
+
+    author: {
+        id: Number,
+        name: String,
+        email: String
+    },
+
+    created_on: Date,
+    closed_on: Date,
+
+    //
+    // computed field = closed_on - created_on
+    // 
+    response_time: Number
 }, {
-    _id: false
+    timestamps: false
 });
 
-issueSchema.plugin(idvalidator);
-module.exports = mongoose.model('Issue', issueSchema);
+module.exports.Issue = mongoose.model('Issue', issueSchema, 'issues');

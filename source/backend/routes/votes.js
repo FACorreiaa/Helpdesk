@@ -2,19 +2,20 @@ var express = require('express');
 var router = express.Router();
 
 const mongoose = require('mongoose');
-const {Evaluation} = require('../models/evaluationModel');
+const {Issue} = require('../models/Issue');
 
-/* GET home page. */
 router.get('/:id/:score', async function(req, res, next) {
-    let issue_id = Number(req.params.id);
-    let score = Number(req.params.score);
+    let issue_id = req.params.id;
+    let score = parseInt(req.params.score);
 
-    let evaluation = await Evaluation.findById(issue_id);
+    console.log('*VOTE*', issue_id, score);
 
-    if (evaluation.score === 0) {
-        evaluation.score = score;
+    let issue = await Issue.findById(issue_id);
+
+    if (issue.score === 0) {
+        issue.score = score;
         
-        await evaluation.save();
+        await issue.save();
 
         let msg = `<h1>you voted ${score} for issue ${issue_id}</h1>`;
         console.log(msg);

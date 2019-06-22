@@ -1,25 +1,35 @@
 const mongoose = require('mongoose');
 
-const {Evaluation} = require('../models/evaluationModel')
+const {
+    Issue
+} = require('../models/Issue')
 
 //
 // G01: número total de pedidos de helpdesk, dado um intervalo de tempo
 // 
 //
 function global_01(d0, d1) {
-    let res = Evaluation.aggregate([
-        {
+    let res = Issue.aggregate([{
             $match: {
-                $and: [ 
-                    { requested_on: { $gte: d0 } }, 
-                    { requested_on: { $lte: d1 } } 
+                $and: [{
+                        requested_on: {
+                            $gte: d0
+                        }
+                    },
+                    {
+                        requested_on: {
+                            $lte: d1
+                        }
+                    }
                 ]
             }
         },
         {
             $group: {
-                _id : null,
-                count: {$sum: 1}
+                _id: null,
+                count: {
+                    $sum: 1
+                }
             }
         },
         {
@@ -39,26 +49,44 @@ function global_01(d0, d1) {
 //
 //
 function global_02(d0, d1) {
-    let res = Evaluation.aggregate([
-        {
+    let res = Issue.aggregate([{
             $match: {
-                $and: [ 
-                    { requested_on: { $gte: d0 } }, 
-                    { requested_on: { $lte: d1 } } 
+                $and: [{
+                        requested_on: {
+                            $gte: d0
+                        }
+                    },
+                    {
+                        requested_on: {
+                            $lte: d1
+                        }
+                    }
                 ]
             }
         },
         {
             $group: {
-                _id : null,
-                neval: { $sum: { $cond : [{ $eq : ["$score", 0] }, 1, 0] } },
-                total: { $sum: 1}
+                _id: null,
+                neval: {
+                    $sum: {
+                        $cond: [{
+                            $eq: ["$score", 0]
+                        }, 1, 0]
+                    }
+                },
+                total: {
+                    $sum: 1
+                }
             }
         },
         {
             $project: {
                 _id: 0,
-                percentage: { $multiply: [ {$divide: [ "$neval", "$total" ]}, 100]}
+                percentage: {
+                    $multiply: [{
+                        $divide: ["$neval", "$total"]
+                    }, 100]
+                }
             }
         }
     ]);
@@ -71,20 +99,32 @@ function global_02(d0, d1) {
 // 
 //
 function global_03(d0, d1) {
-    let res = Evaluation.aggregate([
-        {
+    let res = Issue.aggregate([{
             $match: {
-                $and: [ 
-                    { requested_on: { $gte: d0 } }, 
-                    { requested_on: { $lte: d1 } },
-                    { score: { $ne: 0} } 
+                $and: [{
+                        requested_on: {
+                            $gte: d0
+                        }
+                    },
+                    {
+                        requested_on: {
+                            $lte: d1
+                        }
+                    },
+                    {
+                        score: {
+                            $ne: 0
+                        }
+                    }
                 ]
             }
         },
         {
             $group: {
-                _id : "$priority",
-                avgRTime: { $avg: "$response_time" },
+                _id: "$priority",
+                avgRTime: {
+                    $avg: "$response_time"
+                },
             }
         }
     ]);
@@ -96,20 +136,32 @@ function global_03(d0, d1) {
 // 
 //
 function global_04(d0, d1) {
-    let res = Evaluation.aggregate([
-        {
+    let res = Issue.aggregate([{
             $match: {
-                $and: [ 
-                    { requested_on: { $gte: d0 } }, 
-                    { requested_on: { $lte: d1 } },
-                    { score: { $ne: 0} } 
+                $and: [{
+                        requested_on: {
+                            $gte: d0
+                        }
+                    },
+                    {
+                        requested_on: {
+                            $lte: d1
+                        }
+                    },
+                    {
+                        score: {
+                            $ne: 0
+                        }
+                    }
                 ]
             }
         },
         {
             $group: {
-                _id : null,
-                avgScore: { $avg: "$score" },
+                _id: null,
+                avgScore: {
+                    $avg: "$score"
+                },
             }
         },
         {
@@ -126,20 +178,32 @@ function global_04(d0, d1) {
 // 
 //
 function global_05(d0, d1) {
-    let res = Evaluation.aggregate([
-        {
+    let res = Issue.aggregate([{
             $match: {
-                $and: [ 
-                    { requested_on: { $gte: d0 } }, 
-                    { requested_on: { $lte: d1 } },
-                    { score: { $ne: 0} } 
+                $and: [{
+                        requested_on: {
+                            $gte: d0
+                        }
+                    },
+                    {
+                        requested_on: {
+                            $lte: d1
+                        }
+                    },
+                    {
+                        score: {
+                            $ne: 0
+                        }
+                    }
                 ]
             }
         },
         {
             $group: {
-                _id : null,
-                stdDevScore: { $stdDevPop: "$score" }
+                _id: null,
+                stdDevScore: {
+                    $stdDevPop: "$score"
+                }
             }
         },
         {
@@ -156,23 +220,33 @@ function global_05(d0, d1) {
 // 
 //
 function global_06(d0, d1) {
-    let res = Evaluation.aggregate([
-        {
+    let res = Issue.aggregate([{
             $match: {
-                $and: [ 
-                    { requested_on: { $gte: d0 } }, 
-                    { requested_on: { $lte: d1 } }
+                $and: [{
+                        requested_on: {
+                            $gte: d0
+                        }
+                    },
+                    {
+                        requested_on: {
+                            $lte: d1
+                        }
+                    }
                 ]
             }
         },
         {
             $group: {
-                _id : '$assigned_to',
-                avgRTime: { $avg: "$response_time" }
+                _id: '$assigned_to',
+                avgRTime: {
+                    $avg: "$response_time"
+                }
             }
         },
         {
-            $sort: {'avgRTime': 1}
+            $sort: {
+                'avgRTime': 1
+            }
         },
         {
             $limit: 10
@@ -186,24 +260,38 @@ function global_06(d0, d1) {
 // 
 //
 function global_07(d0, d1) {
-    let res = Evaluation.aggregate([
-        {
+    let res = Issue.aggregate([{
             $match: {
-                $and: [ 
-                    { requested_on: { $gte: d0 } }, 
-                    { requested_on: { $lte: d1 } },
-                    { score: { $ne: 0} } 
+                $and: [{
+                        requested_on: {
+                            $gte: d0
+                        }
+                    },
+                    {
+                        requested_on: {
+                            $lte: d1
+                        }
+                    },
+                    {
+                        score: {
+                            $ne: 0
+                        }
+                    }
                 ]
             }
         },
         {
             $group: {
-                _id : '$assigned_to',
-                avgScore: { $avg: "$score" }
+                _id: '$assigned_to',
+                avgScore: {
+                    $avg: "$score"
+                }
             }
         },
         {
-            $sort: {'avgScore': -1}
+            $sort: {
+                'avgScore': -1
+            }
         },
         {
             $limit: 10
@@ -218,21 +306,24 @@ function global_07(d0, d1) {
 // 
 //
 function assigned_to_01(assigned_to_id) {
-    let res = Evaluation.aggregate([
-        {
+    let res = Issue.aggregate([{
             $match: {
-                'assigned_to.id': { $eq: assigned_to_id }
+                'assigned_to.id': {
+                    $eq: assigned_to_id
+                }
             }
         },
         {
             $group: {
-                _id : null,
-                count: {$sum: 1}
+                _id: null,
+                count: {
+                    $sum: 1
+                }
             }
         },
         {
             $project: {
-                _id: 0    
+                _id: 0
             }
         }
     ]);
@@ -247,23 +338,36 @@ function assigned_to_01(assigned_to_id) {
 //
 //
 function assigned_to_02(assigned_to_id) {
-    let res = Evaluation.aggregate([
-        {
+    let res = Issue.aggregate([{
             $match: {
-                'assigned_to.id': { $eq: assigned_to_id }
+                'assigned_to.id': {
+                    $eq: assigned_to_id
+                }
             }
         },
         {
             $group: {
-                _id : null,
-                neval: { $sum: { $cond : [{ $eq : ["$score", 0] }, 1, 0] } },
-                total: {$sum: 1}
+                _id: null,
+                neval: {
+                    $sum: {
+                        $cond: [{
+                            $eq: ["$score", 0]
+                        }, 1, 0]
+                    }
+                },
+                total: {
+                    $sum: 1
+                }
             }
         },
         {
             $project: {
                 _id: 0,
-                percentage: { $multiply: [ {$divide: [ "$neval", "$total" ]}, 100]}
+                percentage: {
+                    $multiply: [{
+                        $divide: ["$neval", "$total"]
+                    }, 100]
+                }
             }
         }
     ]);
@@ -276,19 +380,27 @@ function assigned_to_02(assigned_to_id) {
 // 
 //
 function assigned_to_03(assigned_to_id) {
-    let res = Evaluation.aggregate([
-        {
+    let res = Issue.aggregate([{
             $match: {
-                $and: [ 
-                    { 'assigned_to.id': { $eq: assigned_to_id }},
-                    { score: { $ne: 0} } 
+                $and: [{
+                        'assigned_to.id': {
+                            $eq: assigned_to_id
+                        }
+                    },
+                    {
+                        score: {
+                            $ne: 0
+                        }
+                    }
                 ]
             }
         },
         {
             $group: {
-                _id : "$priority",
-                avgRTime: { $avg: "$response_time" },
+                _id: "$priority",
+                avgRTime: {
+                    $avg: "$response_time"
+                },
             }
         }
     ]);
@@ -301,19 +413,27 @@ function assigned_to_03(assigned_to_id) {
 // 
 //
 function assigned_to_04(assigned_to_id) {
-    let res = Evaluation.aggregate([
-        {
+    let res = Issue.aggregate([{
             $match: {
-                $and: [ 
-                    { 'assigned_to.id': { $eq: assigned_to_id }},
-                    { score: { $ne: 0} } 
+                $and: [{
+                        'assigned_to.id': {
+                            $eq: assigned_to_id
+                        }
+                    },
+                    {
+                        score: {
+                            $ne: 0
+                        }
+                    }
                 ]
             }
         },
         {
             $group: {
-                _id : null,
-                avgScore: { $avg: "$score" },
+                _id: null,
+                avgScore: {
+                    $avg: "$score"
+                },
             }
         },
         {
@@ -331,19 +451,27 @@ function assigned_to_04(assigned_to_id) {
 // 
 //
 function assigned_to_05(assigned_to_id) {
-    let res = Evaluation.aggregate([
-        {
+    let res = Issue.aggregate([{
             $match: {
-                $and: [ 
-                    { 'assigned_to.id': { $eq: assigned_to_id }},
-                    { score: { $ne: 0} } 
+                $and: [{
+                        'assigned_to.id': {
+                            $eq: assigned_to_id
+                        }
+                    },
+                    {
+                        score: {
+                            $ne: 0
+                        }
+                    }
                 ]
             }
         },
         {
             $group: {
-                _id : null,
-                stdDevScore: { $stdDevPop: "$score" }
+                _id: null,
+                stdDevScore: {
+                    $stdDevPop: "$score"
+                }
             }
         },
         {
@@ -360,16 +488,19 @@ function assigned_to_05(assigned_to_id) {
 // 
 //
 function product_01(product_name) {
-    let res = Evaluation.aggregate([
-        {
+    let res = Issue.aggregate([{
             $match: {
-                'project.product_name': { $eq: product_name }
+                'project.product_name': {
+                    $eq: product_name
+                }
             }
         },
         {
             $group: {
-                _id : null,
-                count: {$sum: 1}
+                _id: null,
+                count: {
+                    $sum: 1
+                }
             }
         },
         {
@@ -388,23 +519,36 @@ function product_01(product_name) {
 //
 //
 function product_02(product_name) {
-    let res = Evaluation.aggregate([
-        {
+    let res = Issue.aggregate([{
             $match: {
-                'project.product_name': { $eq: product_name }
+                'project.product_name': {
+                    $eq: product_name
+                }
             }
         },
         {
             $group: {
-                _id : null,
-                neval: { $sum: { $cond : [{ $eq : ["$score", 0] }, 1, 0] } },
-                total: {$sum: 1}
+                _id: null,
+                neval: {
+                    $sum: {
+                        $cond: [{
+                            $eq: ["$score", 0]
+                        }, 1, 0]
+                    }
+                },
+                total: {
+                    $sum: 1
+                }
             }
         },
         {
             $project: {
                 _id: 0,
-                percentage: { $multiply: [ {$divide: [ "$neval", "$total" ]}, 100]}
+                percentage: {
+                    $multiply: [{
+                        $divide: ["$neval", "$total"]
+                    }, 100]
+                }
             }
         }
     ]);
@@ -418,19 +562,27 @@ function product_02(product_name) {
 // 
 //
 function product_03(product_name) {
-    let res = Evaluation.aggregate([
-        {
+    let res = Issue.aggregate([{
             $match: {
-                $and: [ 
-                    { 'project.product_name' : { $eq: product_name }},
-                    { score: { $ne: 0} } 
+                $and: [{
+                        'project.product_name': {
+                            $eq: product_name
+                        }
+                    },
+                    {
+                        score: {
+                            $ne: 0
+                        }
+                    }
                 ]
             }
         },
         {
             $group: {
-                _id : "$priority",
-                avgRTime: { $avg: "$response_time" },
+                _id: "$priority",
+                avgRTime: {
+                    $avg: "$response_time"
+                },
             }
         }
     ]);
@@ -443,19 +595,27 @@ function product_03(product_name) {
 // 
 //
 function product_04(product_name) {
-    let res = Evaluation.aggregate([
-        {
+    let res = Issue.aggregate([{
             $match: {
-                $and: [ 
-                    { 'project.product_name': { $eq: product_name }},
-                    { score: { $ne: 0} } 
+                $and: [{
+                        'project.product_name': {
+                            $eq: product_name
+                        }
+                    },
+                    {
+                        score: {
+                            $ne: 0
+                        }
+                    }
                 ]
             }
         },
         {
             $group: {
-                _id : null,
-                avgScore: { $avg: "$score" },
+                _id: null,
+                avgScore: {
+                    $avg: "$score"
+                },
             }
         },
         {
@@ -473,19 +633,27 @@ function product_04(product_name) {
 // 
 //
 function product_05(product_name) {
-    let res = Evaluation.aggregate([
-        {
+    let res = Issue.aggregate([{
             $match: {
-                $and: [ 
-                    { 'project.product_name': { $eq: product_name }},
-                    { score: { $ne: 0} } 
+                $and: [{
+                        'project.product_name': {
+                            $eq: product_name
+                        }
+                    },
+                    {
+                        score: {
+                            $ne: 0
+                        }
+                    }
                 ]
             }
         },
         {
             $group: {
-                _id : null,
-                stdDevScore: { $stdDevPop: "$score" }
+                _id: null,
+                stdDevScore: {
+                    $stdDevPop: "$score"
+                }
             }
         },
         {
@@ -502,20 +670,25 @@ function product_05(product_name) {
 // 
 //
 function product_06(product_name) {
-    let res = Evaluation.aggregate([
-        {
+    let res = Issue.aggregate([{
             $match: {
-                'project.product_name': { $eq: product_name }
+                'project.product_name': {
+                    $eq: product_name
+                }
             }
         },
         {
             $group: {
-                _id : '$assigned_to',
-                avgRTime: { $avg: "$response_time" }
+                _id: '$assigned_to',
+                avgRTime: {
+                    $avg: "$response_time"
+                }
             }
         },
         {
-            $sort: {'avgRTime': 1}
+            $sort: {
+                'avgRTime': 1
+            }
         },
         {
             $limit: 10
@@ -529,23 +702,33 @@ function product_06(product_name) {
 // 
 //
 function product_07(product_name) {
-    let res = Evaluation.aggregate([
-        {
+    let res = Issue.aggregate([{
             $match: {
-                $and: [ 
-                    { 'project.product_name': { $eq: product_name }},
-                    { score: { $ne: 0} } 
+                $and: [{
+                        'project.product_name': {
+                            $eq: product_name
+                        }
+                    },
+                    {
+                        score: {
+                            $ne: 0
+                        }
+                    }
                 ]
             }
         },
         {
             $group: {
-                _id : '$assigned_to',
-                avgScore: { $avg: "$score" }
+                _id: '$assigned_to',
+                avgScore: {
+                    $avg: "$score"
+                }
             }
         },
         {
-            $sort: {'avgScore': -1}
+            $sort: {
+                'avgScore': -1
+            }
         },
         {
             $limit: 10
@@ -559,31 +742,48 @@ function product_07(product_name) {
 // 
 //
 function temporal_01(d0, d1) {
-    let res = Evaluation.aggregate([
-        {
+    let res = Issue.aggregate([{
             $match: {
-                $and: [ 
-                    { created_on: { $gte: d0 } }, 
-                    { created_on: { $lte: d1 } } 
+                $and: [{
+                        created_on: {
+                            $gte: d0
+                        }
+                    },
+                    {
+                        created_on: {
+                            $lte: d1
+                        }
+                    }
                 ]
             }
         },
         {
-            $project:
-            {
+            $project: {
                 newDate: {
-                    year: { $year: "$created_on" },
-                    month: { $month: "$created_on" },
-                    day: { $dayOfMonth: "$created_on" },
-                    hour: { $hour: "$created_on" },
-                    minutes: { $minute: "$created_on" }
+                    year: {
+                        $year: "$created_on"
+                    },
+                    month: {
+                        $month: "$created_on"
+                    },
+                    day: {
+                        $dayOfMonth: "$created_on"
+                    },
+                    hour: {
+                        $hour: "$created_on"
+                    },
+                    minutes: {
+                        $minute: "$created_on"
+                    }
                 }
             }
         },
         {
             $group: {
                 _id: '$newDate',
-                count: {$sum: 1}
+                count: {
+                    $sum: 1
+                }
             }
         }
     ]);
@@ -596,32 +796,53 @@ function temporal_01(d0, d1) {
 // 
 //
 function temporal_02(d0, d1) {
-    let res = Evaluation.aggregate([
-        {
+    let res = Issue.aggregate([{
             $match: {
-                $and: [ 
-                    { created_on: { $gte: d0 } }, 
-                    { created_on: { $lte: d1 } },
-                    { score: { $ne: 0 } }
+                $and: [{
+                        created_on: {
+                            $gte: d0
+                        }
+                    },
+                    {
+                        created_on: {
+                            $lte: d1
+                        }
+                    },
+                    {
+                        score: {
+                            $ne: 0
+                        }
+                    }
                 ]
             }
         },
         {
-            $project:
-            {
+            $project: {
                 newDate: {
-                    year: { $year: "$created_on" },
-                    month: { $month: "$created_on" },
-                    day: { $dayOfMonth: "$created_on" },
-                    hour: { $hour: "$created_on" },
-                    minutes: { $minute: "$created_on" }
+                    year: {
+                        $year: "$created_on"
+                    },
+                    month: {
+                        $month: "$created_on"
+                    },
+                    day: {
+                        $dayOfMonth: "$created_on"
+                    },
+                    hour: {
+                        $hour: "$created_on"
+                    },
+                    minutes: {
+                        $minute: "$created_on"
+                    }
                 }
             }
         },
         {
             $group: {
                 _id: '$newDate',
-                avgScore: { $avr: '$score' }
+                avgScore: {
+                    $avr: '$score'
+                }
             }
         }
     ]);
@@ -629,8 +850,25 @@ function temporal_02(d0, d1) {
 }
 
 module.exports = {
-    global_01, global_02, global_03, global_04, global_05, global_06, global_07,
-    assigned_to_01, assigned_to_02, assigned_to_03, assigned_to_04, assigned_to_05,
-    product_01, product_02, product_03, product_04, product_05, product_06, product_07,
-    temporal_01, temporal_02
+    global_01,
+    global_02,
+    global_03,
+    global_04,
+    global_05,
+    global_06,
+    global_07,
+    assigned_to_01,
+    assigned_to_02,
+    assigned_to_03,
+    assigned_to_04,
+    assigned_to_05,
+    product_01,
+    product_02,
+    product_03,
+    product_04,
+    product_05,
+    product_06,
+    product_07,
+    temporal_01,
+    temporal_02
 };
