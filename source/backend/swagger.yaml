@@ -1,0 +1,192 @@
+swagger: "2.0"
+info:
+  description: "This is the API for Helpdesk-master "
+  version: "1.0.0"
+  title: "HelpDesk Master"
+host: "localhost:3000"
+basePath: "/"
+tags:
+  - name: "stats"
+    description:  "Permite obter metricas para estatisticas"
+  - name: "votes"
+    description:  "Permite fazer a avaliação da issue"
+  - name: "issues"
+    description:  "Permite fazer a gestão das issues"
+  - name: "users"
+    description:  "Permite fazer a gestão dosutilizadores"
+schemes:
+  - "http"
+  - "https"
+consumes:
+  - "application/json"
+  - "application/xml"
+produces:
+  - "application/json"
+  - "application/xml"
+paths:
+  /users:
+    get:
+      tags:
+        - "users"
+      summary: "Permite obter os utilizadores"
+      operationId: "getUsers"
+      consumes:
+        - "application/json"
+        - "application/xml"
+      produces:
+        - "application/json"
+        - "application/xml"
+      responses:
+        '200':
+          description: "Success"
+          schema:
+            type: "array"
+            items:
+              $ref: '#/definitions/User'
+  /users/{id}:
+    put:
+      tags:
+        - "users"
+      summary: "Permite fazer o update de um user"
+      operationId: "putUser"
+      consumes:
+        - "application/json"
+        - "application/xml"
+      produces:
+        - "application/json"
+        - "application/xml"
+      parameters:
+        - in: "body"
+          name: "body"
+          schema:
+            $ref: "#/definitions/User"
+        - in: "path"
+          name: "id"
+          description: "user id"
+          required: true
+          type: "string"
+      responses:
+        '200':
+          description: "User atualizado"
+        '404':
+          description: "Error "
+    delete:
+      tags:
+        - "users"
+      summary: "Permite eliminar um utilizador"
+      operationId: "deleteUser"
+      consumes:
+        - "application/json"
+        - "application/xml"
+      produces:
+        - "application/json"
+        - "application/xml"
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "user id"
+          required: true
+          type: "integer"
+      responses:
+        '200':
+          description: "User removido"
+        '404':
+          description: "Error "
+  /users/force:
+    get:
+      tags:
+        - "users"
+      summary: "Permite obter os utilizadores"
+      operationId: "getUsersForce"
+      consumes:
+        - "application/json"
+        - "application/xml"
+      produces:
+        - "application/json"
+        - "application/xml"
+      responses:
+        '200':
+          description: "Success"
+          schema:
+            type: "array"
+            items:
+              $ref: '#/definitions/User'
+definitions:
+  User:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      login:
+        type: "string"
+      firstname:
+        type: "string"
+      lastname:
+        type: "string"
+      mail:
+        type: "string"
+      created_on:
+        type: "string"
+      last_login_on:
+        type: "string"
+  Issue:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      project:
+        type: "object"
+        properties:
+          id:
+            type: "integer"
+          name:
+            type: "string"
+      tracker:
+        type: "object"
+        properties:
+          id:
+            type: "integer"
+          name:
+            type: "string"
+      status:
+        type: "object"
+        properties:
+          id:
+            type: "integer"
+          name:
+            type: "string"
+      priority:
+        type: "object"
+        properties:
+          id:
+            type: "integer"
+          name:
+            type: "string"
+      author:
+        type: "object"
+        properties:
+          id:
+            type: "integer"
+          name:
+            type: "string"
+      assigned_to:
+        type: "object"
+        properties:
+          id:
+            type: "integer"
+          name:
+            type: "string"
+      subject:
+        type: "string"
+      description:
+        type: "string"
+      start_date:
+        type: "string"
+      done_ratio:
+        type: "integer"
+      closed_on:
+        type: "string"
+      created_on:
+        type: "string"
+      updated_on:
+        type: "string"

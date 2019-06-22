@@ -26,7 +26,9 @@ const issueCreate = require('./controlers/Issue');
 const usersCreate = require('./controlers/User');
 const issuesRouter = require('./routes/issues');
 const usersRouter = require('./routes/users');
-
+const swaggerUI = require('swagger-ui-express');
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load('swagger.yaml');
 
 
 //ADICIONEI
