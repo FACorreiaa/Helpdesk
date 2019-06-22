@@ -85,6 +85,7 @@ if (!isProduction) {
 //Configure Mongoose
 mongoose.connect("mongodb://localhost/helpdesk");
 mongoose.set("debug", true);
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 app.use("/", indexRouter);
 app.use("/stats", statsRouter);
