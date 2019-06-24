@@ -28,18 +28,18 @@ async function main() {
   try {
     console.log("starting...");
 
-    // Connecting to the database
-    // await mongoose
-    //   .connect(process.env.URI, {
-    //     useNewUrlParser: true
-    //   })
-    //   .then(() => {
-    //     console.log("Successfully connected to the database");
-    //   })
-    //   .catch(err => {
-    //     console.log("Could not connect to the database. Exiting now...", err);
-    //     process.exit();
-    //   });
+    //Connecting to the database
+    mongoose
+      .connect(process.env.URI, {
+        useNewUrlParser: true
+      })
+      .then(() => {
+        console.log("Successfully connected to the database");
+      })
+      .catch(err => {
+        console.log("Could not connect to the database. Exiting now...", err);
+        process.exit();
+      });
 
     console.log("connected to db");
 
@@ -141,14 +141,20 @@ async function getIssues(dateAfter) {
         };
 
         const dbIssue = new Issue({
-          //
-          // _id: default internal ObjectId
-          //
-          // fields with default values
-          //
-          // requested_on: {type: Date, default: new Date.now()}
-          // evaluated_on: {type: Date, default: null},
-          // score: {type: Number, default: 0}
+
+          //_id: default internal ObjectId
+
+          //fields with default values
+
+          // requested_on: {
+          //   type: Date,
+          //   default: new Date.now()
+          // },
+          // evaluated_on: {
+          //   type: Date,
+          //   default: null
+          // },
+          score: issue.score,
 
           //
           // data from issue
@@ -180,6 +186,7 @@ async function getIssues(dateAfter) {
         });
 
         const newIssue = await dbIssue.save();
+        console.log('Pooling!');
 
         //
         // compose and send email to client
@@ -213,12 +220,12 @@ async function getIssues(dateAfter) {
         }/vote/5">Vote 5</a></li>
                     </ul>`;
 
-        //console.log('*EMAIL*', message);
+        console.log('*EMAIL*', message);
 
-        // await sendEmailBySMTP({
-        //   subject: "Helpdesk issue evaluation",
-        //   message: message
-        // });
+        await sendEmailBySMTP({
+          subject: "Helpdesk issue evaluation",
+          message: message
+        });
       } catch (err) {
         console.log(err);
       }

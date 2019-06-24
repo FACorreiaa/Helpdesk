@@ -71,53 +71,33 @@ export class Global extends Component {
             </Button>{" "}
           </Grid>{" "}
         </Grid>{" "}
-        <Grid container spacing={2}>
-          <Grid item xs={3}>
-            <TextField
-              disabled
-              id="outlined-disabled"
-              label="Total Pedidos"
-              defaultValue="Hello World"
-              className={classes.textField}
-              margin="normal"
-              variant="outlined"
-            />
-          </Grid>{" "}
-          <Grid item xs={3}>
-            <TextField
-              disabled
-              id="outlined-disabled"
-              label="% pedidos não avaliados"
-              defaultValue="Hello World"
-              className={classes.textField}
-              margin="normal"
-              variant="outlined"
-            />
-          </Grid>{" "}
-          <Grid item xs={3}>
-            <TextField
-              disabled
-              id="outlined-disabled"
-              label="Avaliação média do Serviço"
-              defaultValue="Hello World"
-              className={classes.textField}
-              margin="normal"
-              variant="outlined"
-            />
-          </Grid>{" "}
-          <Grid item xs={3}>
-            <TextField
-              disabled
-              id="outlined-disabled"
-              label="Desvio padrão votações"
-              defaultValue="Hello World"
-              className={classes.textField}
-              margin="normal"
-              variant="outlined"
-            />
-          </Grid>{" "}
-        </Grid>{" "}
         <Grid container spacing={3}>
+          <Grid item xs>
+            <Grid item xs>
+              <Paper className={classes.root}>
+                <Table className={classes.table}>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell align="right">Nivel de prioridade</TableCell>
+                      <TableCell align="right">Tempo médio</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {rows.map(row => (
+                      <TableRow key={row.name}>
+                        <TableCell component="th" scope="row">
+                          {row.name}
+                        </TableCell>
+                        <TableCell align="right">{row.calories}</TableCell>
+                        <TableCell align="right">{row.fat}</TableCell>
+                        <TableCell align="right">{row.carbs}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </Paper>
+            </Grid>
+          </Grid>
           <Grid item xs>
             <Paper className={classes.paperClasses}>
               <List className={classes.root} subheader={<li />}>

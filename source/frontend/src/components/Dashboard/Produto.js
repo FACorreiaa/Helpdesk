@@ -20,7 +20,11 @@ import { paperTable } from "../constants/table";
 
 export class Produto extends Component {
   createData = (name, calories, fat) => {
-    return { name, calories, fat };
+    return {
+      name,
+      calories,
+      fat
+    };
   };
   render() {
     const rows = [
@@ -67,51 +71,31 @@ export class Produto extends Component {
         </Grid>{" "}
         <Grid container spacing={3}>
           <Grid item xs>
-            <TextField
-              disabled
-              id="outlined-disabled"
-              label="Total Pedidos"
-              defaultValue="Hello World"
-              className={classes.textField}
-              margin="normal"
-              variant="outlined"
-            />
+            <Paper className={classes.root}>
+              <Table className={classes.table}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell align="right"> Nivel de prioridade </TableCell>{" "}
+                    <TableCell align="right"> Tempo médio </TableCell>{" "}
+                  </TableRow>{" "}
+                </TableHead>{" "}
+                <TableBody>
+                  {" "}
+                  {rows.map(row => (
+                    <TableRow key={row.name}>
+                      <TableCell component="th" scope="row">
+                        {" "}
+                        {row.name}{" "}
+                      </TableCell>{" "}
+                      <TableCell align="right"> {row.calories} </TableCell>{" "}
+                      <TableCell align="right"> {row.fat} </TableCell>{" "}
+                      <TableCell align="right"> {row.carbs} </TableCell>{" "}
+                    </TableRow>
+                  ))}{" "}
+                </TableBody>{" "}
+              </Table>{" "}
+            </Paper>{" "}
           </Grid>{" "}
-          <Grid item xs>
-            <TextField
-              disabled
-              id="outlined-disabled"
-              label="% pedidos não avaliados"
-              defaultValue="Hello World"
-              className={classes.textField}
-              margin="normal"
-              variant="outlined"
-            />
-          </Grid>{" "}
-          <Grid item xs>
-            <TextField
-              disabled
-              id="outlined-disabled"
-              label="Tempo médio de resposta"
-              defaultValue="Hello World"
-              className={classes.textField}
-              margin="normal"
-              variant="outlined"
-            />
-          </Grid>{" "}
-          <Grid item xs>
-            <TextField
-              disabled
-              id="outlined-disabled"
-              label="Desvio padrão votações"
-              defaultValue="Hello World"
-              className={classes.textField}
-              margin="normal"
-              variant="outlined"
-            />
-          </Grid>{" "}
-        </Grid>{" "}
-        <Grid container spacing={3}>
           <Grid item xs>
             <Paper className={classes.paperClasses}>
               <List className={classes.root} subheader={<li />}>
@@ -161,29 +145,31 @@ export class Produto extends Component {
               <Table className={classes.table}>
                 <TableHead>
                   <TableRow>
-                    <TableCell align="right">Nivel de prioridade</TableCell>
-                    <TableCell align="right">Tempo médio</TableCell>
-                  </TableRow>
-                </TableHead>
+                    <TableCell align="right"> Nivel de prioridade </TableCell>{" "}
+                    <TableCell align="right"> Tempo médio </TableCell>{" "}
+                  </TableRow>{" "}
+                </TableHead>{" "}
                 <TableBody>
+                  {" "}
                   {rows.map(row => (
                     <TableRow key={row.name}>
                       <TableCell component="th" scope="row">
-                        {row.name}
-                      </TableCell>
-                      <TableCell align="right">{row.calories}</TableCell>
-                      <TableCell align="right">{row.fat}</TableCell>
-                      <TableCell align="right">{row.carbs}</TableCell>
+                        {" "}
+                        {row.name}{" "}
+                      </TableCell>{" "}
+                      <TableCell align="right"> {row.calories} </TableCell>{" "}
+                      <TableCell align="right"> {row.fat} </TableCell>{" "}
+                      <TableCell align="right"> {row.carbs} </TableCell>{" "}
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Paper>
-          </Grid>
+                  ))}{" "}
+                </TableBody>{" "}
+              </Table>{" "}
+            </Paper>{" "}
+          </Grid>{" "}
         </Grid>{" "}
         {/* <Grid container spacing={4}>
-                  <Prod />
-                </Grid>{" "} */}{" "}
+                          <Prod />
+                        </Grid>{" "} */}{" "}
       </div>
     );
   }
