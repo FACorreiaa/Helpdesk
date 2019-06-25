@@ -43,7 +43,7 @@ function App() {
           <Route path="/Register" exact component={Register} />{" "}
           <Route path="/Signup" component={Signup} />{" "}
         </Switch>{" "}
-      </HashRouter>
+      </HashRouter>{" "}
     </Provider>
   );
 }

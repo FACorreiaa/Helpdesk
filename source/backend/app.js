@@ -8,8 +8,6 @@ const express = require("express");
 const path = require("path");
 const usersJWT = require("./helpers/login/routes/api/users");
 const indexRouter = require("./routes/index");
-const statsRouter = require("./routes/stats");
-const votesRouter = require("./routes/votes");
 const issuesRouter = require('./routes/issues');
 const swaggerUI = require('swagger-ui-express');
 const YAML = require('yamljs');
@@ -73,9 +71,7 @@ mongoose.set("debug", true);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 app.use("/", indexRouter);
-app.use("/stats", statsRouter);
-app.use("/votes", votesRouter);
-app.use('/issues', issuesRouter);
+app.use("/issues", issuesRouter);
 
 // Routes
 app.use("/api/users", usersJWT);
