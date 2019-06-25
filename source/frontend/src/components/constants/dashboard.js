@@ -25,4 +25,7 @@ export const classes = makeStyles(theme => ({
     button: {
         margin: theme.spacing(1),
     },
+    padding: {
+        paddingLeft: "16px"
+    }
 }));

@@ -95,8 +95,8 @@ export class Produto extends Component {
           <Grid item xs>
             <FormControl className={dropdown.formControl}>
               <InputLabel shrink htmlFor="age-label-placeholder">
-                Produto
-              </InputLabel>
+                Produto{" "}
+              </InputLabel>{" "}
               <Select
                 value={this.state.age}
                 onChange={handleChange}
@@ -106,14 +106,37 @@ export class Produto extends Component {
                 className={dropdown.selectEmpty}
               >
                 <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
-            </FormControl>
+                  <em> None </em>{" "}
+                </MenuItem>{" "}
+                <MenuItem value={10}> Ten </MenuItem>{" "}
+                <MenuItem value={20}> Twenty </MenuItem>{" "}
+                <MenuItem value={30}> Thirty </MenuItem>{" "}
+              </Select>{" "}
+            </FormControl>{" "}
           </Grid>
+          <Grid item xs>
+            {" "}
+            <FormControl className={dropdown.formControl}>
+              <InputLabel shrink htmlFor="age-label-placeholder">
+                Produto{" "}
+              </InputLabel>{" "}
+              <Select
+                value={this.state.age}
+                onChange={handleChange}
+                input={<Input name="age" id="age-label-placeholder" />}
+                displayEmpty
+                name="age"
+                className={dropdown.selectEmpty}
+              >
+                <MenuItem value="">
+                  <em> None </em>{" "}
+                </MenuItem>{" "}
+                <MenuItem value={10}> Ten </MenuItem>{" "}
+                <MenuItem value={20}> Twenty </MenuItem>{" "}
+                <MenuItem value={30}> Thirty </MenuItem>{" "}
+              </Select>{" "}
+            </FormControl>{" "}
+          </Grid>{" "}
         </Grid>{" "}
         <Grid container spacing={3}>
           <Grid item xs>
@@ -211,8 +234,8 @@ export class Produto extends Component {
           </Grid>{" "}
         </Grid>{" "}
         {/* <Grid container spacing={4}>
-                                  <Prod />
-                                </Grid>{" "} */}{" "}
+                                          <Prod />
+                                        </Grid>{" "} */}{" "}
       </div>
     );
   }

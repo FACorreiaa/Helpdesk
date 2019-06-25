@@ -36,7 +36,14 @@ export class Global extends Component {
     this.state = {
       age: "",
       name: "ai",
-      formFields: { from: "", to: "" }
+      formFields: { from: "", to: "" },
+      count: [],
+      avgScore: [],
+      stdDevScore: [],
+      descrLevel: [],
+      valueLevel: [],
+      celerUser: [],
+      scoreUser: []
     };
   }
 
@@ -49,66 +56,41 @@ export class Global extends Component {
     };
   };
 
+  createData2 = (name, calories, fat, batatas) => {
+    return {
+      name,
+      calories,
+      fat
+    };
+  };
+
   render() {
     //const { from, to } = this.state;
 
     const rows = [
-      this.createData("Low", 1),
-      this.createData("Medium", 2),
-      this.createData("High", 3),
-      this.createData("Teste", 4)
+      this.createData("Nº total pedidos", this.state.count.total),
+      this.createData("% Pedidos Não Avaliados", this.state.count.neval),
+      this.createData(
+        "Avaliação média Qualidade",
+        this.state.avgScore.avgScore
+      ),
+      this.createData("Desvio padrão", this.state.stdDevScore.stdDevScore)
+    ];
+
+    const rows2 = [
+      this.createData2(this.state.descrLevel[0], this.state.valueLevel[0]),
+      this.createData2(this.state.descrLevel[1], this.state.valueLevel[1]),
+      this.createData2(this.state.descrLevel[2], this.state.valueLevel[2])
     ];
 
     const theme = {
       spacing: [0, 2, 3, 5, 8]
     };
 
-    // function handleChange(event) {
-    //   this.setState(oldValues => ({
-    //     ...oldValues,
-    //     [event.target.name]: event.target.value
-    //   }));
-    // }
-
-    // function handleChange1(e, from) {
-    //   this.setState({
-    //     from: e.target.value,
-    //     to: e.target.value
-    //   });
-    //   console.log(e);
-    //   console.log(this.state.from);
-    // }
-
-    // function handleChange1(e) {
-    //   // console.log(e.target.value);
-    //   // this.setState({
-    //   //   from: e.target.value
-    //   // });
-    //   // console.log("from: ", this.state.from);
-    //   const value = e.target.value;
-    //   const name = e.target.name;
-    //   this.setState({
-    //     [name]: value
-    //   });
-    //   console.log(from);
-    //   console.log(name);
-    // }
-
-    // function handleChange2(e, to) {
-    //   console.log(e.target.value);
-    //   this.setState({
-    //     [to]: e.target.value
-    //   });
-    //   console.log(`teste ${this.state.to}`);
-    // }
-
     return (
       <div className={classes.root}>
         <Grid container spacing={3}>
-          <form
-            onSubmit={this.formHandler(this.state.formFields)}
-            style={{ display: "inline-flex", padding: "15px" }}
-          >
+          <form style={{ display: "inline-flex", padding: "15px" }}>
             <Grid item xs>
               <TextField
                 id="from"
@@ -122,7 +104,6 @@ export class Global extends Component {
                   shrink: true
                 }}
                 formatDate={from => moment(from).format("DD-MM-YYYY")}
-                //onChange={handleChange1.bind(this)}
                 onChange={e => this.inputChangeHandler.call(this, e)}
                 value={this.state.formFields.from}
               />{" "}
@@ -146,9 +127,10 @@ export class Global extends Component {
             </Grid>{" "}
             <Grid item xs>
               <Button
-                type="submit"
+                type="button"
                 variant="contained"
                 className={classes.button}
+                onClick={e => this.getGlobalState(this.state.formFields)}
               >
                 Submit{" "}
               </Button>{" "}
@@ -188,15 +170,15 @@ export class Global extends Component {
                 </TableHead>{" "}
                 <TableBody>
                   {" "}
-                  {rows.map(row => (
-                    <TableRow key={row.name}>
+                  {rows2.map(row2 => (
+                    <TableRow key={row2.name}>
                       <TableCell component="th" scope="row">
                         {" "}
-                        {row.name}{" "}
+                        {row2.name}{" "}
                       </TableCell>{" "}
-                      <TableCell align="right"> {row.calories} </TableCell>{" "}
-                      <TableCell align="right"> {row.fat} </TableCell>{" "}
-                      <TableCell align="right"> {row.carbs} </TableCell>{" "}
+                      <TableCell align="right"> {row2.calories} </TableCell>{" "}
+                      <TableCell align="right"> {row2.fat} </TableCell>{" "}
+                      <TableCell align="right"> {row2.carbs} </TableCell>{" "}
                     </TableRow>
                   ))}{" "}
                 </TableBody>{" "}
@@ -209,21 +191,15 @@ export class Global extends Component {
             <Paper className={classes.paperClasses}>
               <List className={classes.root} subheader={<li />}>
                 {" "}
-                {[0].map(sectionId => (
-                  <li
-                    key={`section-${sectionId}`}
-                    className={classes.listSection}
+                <ListSubheader> {`Top users velocidade`} </ListSubheader>{" "}
+                {this.state.celerUser.map(item => (
+                  <ListItemText
+                    style={{ paddingLeft: "15px" }}
+                    primary={`${item}`}
                   >
-                    <ul className={classes.ul}>
-                      <ListSubheader> {`Top users por rating`} </ListSubheader>{" "}
-                      {[0, 1, 2].map(item => (
-                        <ListItem key={`item-${sectionId}-${item}`}>
-                          <ListItemText primary={`Item ${item}`} />{" "}
-                        </ListItem>
-                      ))}{" "}
-                    </ul>{" "}
-                  </li>
-                ))}{" "}
+                    {" "}
+                  </ListItemText>
+                ))}
               </List>{" "}
             </Paper>{" "}
           </Grid>{" "}
@@ -231,21 +207,15 @@ export class Global extends Component {
             <Paper className={classes.paperClasses}>
               <List className={classes.root} subheader={<li />}>
                 {" "}
-                {[0].map(sectionId => (
-                  <li
-                    key={`section-${sectionId}`}
-                    className={classes.listSection}
+                <ListSubheader> {`Top users score`} </ListSubheader>{" "}
+                {this.state.scoreUser.map(item => (
+                  <ListItemText
+                    style={{ paddingLeft: "15px" }}
+                    primary={`${item}`}
                   >
-                    <ul className={classes.ul}>
-                      <ListSubheader> {`Top users por rating`} </ListSubheader>{" "}
-                      {[0, 1, 2].map(item => (
-                        <ListItem key={`item-${sectionId}-${item}`}>
-                          <ListItemText primary={`Item ${item}`} />{" "}
-                        </ListItem>
-                      ))}{" "}
-                    </ul>{" "}
-                  </li>
-                ))}{" "}
+                    {" "}
+                  </ListItemText>
+                ))}
               </List>{" "}
             </Paper>{" "}
           </Grid>{" "}
@@ -269,17 +239,71 @@ export class Global extends Component {
     console.log(formFields.to);
   }
 
-  formHandler(formFields) {
-    axios
-      .post("/api/register", formFields)
-      .then(function(response) {
-        console.log(response);
-        //Perform action based on response
-      })
-      .catch(function(error) {
-        console.log(error);
-        //Perform action based on error
+  getGlobalState = async (from, to) => {
+    from = this.state.formFields.from;
+    to = this.state.formFields.to;
+
+    let res;
+    let rest;
+    let resStd;
+    let resLevel;
+    let resFast;
+    let resScore;
+    try {
+      res = await axios.get(
+        `http://localhost:3000/issues/count?from=${from}&to=${to}`
+      );
+      let data = res.data[0];
+      console.log(data.neval);
+
+      rest = await axios.get(
+        `http://localhost:3000/issues/scoreAvg?from=${from}&to=${to}`
+      );
+      let dataavg = rest.data[0];
+
+      resStd = await axios.get(
+        `http://localhost:3000/issues/scoreStd?from=${from}&to=${to}`
+      );
+      let datastd = resStd.data[0];
+
+      resLevel = await axios.get(
+        `http://localhost:3000/issues/priority/responseTimeAvg?from=${from}&to=${to}`
+      );
+      let dataLevel = resLevel.data;
+
+      const descrLevel = dataLevel.map(l => l._id.name);
+      const valueLevel = dataLevel.map(l => l.avgRTime);
+
+      resFast = await axios.get(
+        `http://localhost:3000/issues/collaborators/responseTimeAvg?from=${from}&to=${to}`
+      );
+      let dataFast = resFast.data;
+
+      const celerUser = dataFast.map(df => df._id.name);
+
+      //
+      resScore = await axios.get(
+        `http://localhost:3000/issues/collaborators/scoreAvg?from=${from}&to=${to}`
+      );
+      let dataScore = resScore.data;
+      const scoreUser = dataScore.map(df => df._id.name);
+      this.setState({
+        count: data,
+        avgScore: dataavg,
+        stdDevScore: datastd,
+        descrLevel: descrLevel,
+        valueLevel: valueLevel,
+        celerUser: celerUser,
+        scoreUser: scoreUser
       });
+      console.log(this.state.scoreUser);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  async componentDidMount() {
+    await this.getGlobalState();
   }
 }
 
