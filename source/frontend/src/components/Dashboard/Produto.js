@@ -36,7 +36,12 @@ export class Produto extends Component {
       formFields: { from: "", to: "" },
       prods: [],
       prod: "",
-      count: []
+      count: [
+        {
+          total: 0,
+          neval: 0
+        }
+      ]
     };
   }
 
@@ -50,7 +55,7 @@ export class Produto extends Component {
   };
   render() {
     const rows = [
-      this.createData("Nº total pedidos", 1),
+      this.createData("Nº total pedidos", this.state.count.total),
       this.createData("% Pedidos Não Avaliados", 2),
       this.createData("High", 3),
       this.createData("Teste", 4)
@@ -112,9 +117,9 @@ export class Produto extends Component {
                 value={this.state.prod}
                 //defaultValue={this.state.prod}
                 //onChange={this.handleChange}
-                onClick={e => {
+                onChange={e => {
+                  this.getProdAPI(e);
                   this.handleClick(e);
-                  this.getProdAPI();
                 }}
                 input={<Input name="prods" id="age-label-placeholder" />}
                 displayEmpty
@@ -125,7 +130,7 @@ export class Produto extends Component {
                   <em> Selecione o produto </em>{" "}
                 </MenuItem>{" "}
                 {this.state.prods.map((item, key) => (
-                  <MenuItem value={item} key={key}>
+                  <MenuItem value={item} key={key} name="prod">
                     {" "}
                     {item}{" "}
                   </MenuItem>
@@ -252,25 +257,31 @@ export class Produto extends Component {
   //   );
   // };
 
-  handleClick = event => {
-    let value = event.target.value === undefined ? "ola" : event.target.value;
+  handleClick = async event => {
+    let value = event.target.value;
 
-    this.setState({
+    await this.setState({
       prod: value
     });
-
+    console.log("1: " + value);
     return value;
   };
 
   getProdAPI = async e => {
     let from = this.state.formFields.from;
     let to = this.state.formFields.to;
-    //const value = e.target.value === undefined ? "ola" : this.state.prod;
+    //let value = e.target.value;
+    let prod = this.state.prod;
+    console.log("from: " + from);
+    console.log("to: " + to);
+    console.log("prod" + this.state.prod);
+    console.log("prods" + this.state.prods);
+
     //console.log(value);
     let res;
     try {
       res = await axios.get(
-        `http://localhost:3000/issues/count?from=${from}&to=${to}&product_name=${value}`
+        `http://localhost:3000/issues/count?from=${from}&to=${to}&product_name=${prod}`
       );
     } catch (error) {
       console.log(error);
@@ -279,7 +290,7 @@ export class Produto extends Component {
     let data = res.data[0];
     console.log(data);
 
-    this.setState({
+    await this.setState({
       count: data
     });
   };
@@ -297,12 +308,18 @@ export class Produto extends Component {
       let data = resProd.data;
       const dataProd = data.map(pn => pn._id.product_name);
       console.log(dataProd);
-      this.setState({
+      await this.setState({
         prods: dataProd
       });
     } catch (error) {
       console.log(error);
     }
+  };
+
+  componentDidMount = async () => {
+    await this.getProductName();
+    await this.getProdAPI();
+    await this.getProductName();
   };
 }
 
