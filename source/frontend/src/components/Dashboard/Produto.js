@@ -24,13 +24,19 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import Input from "@material-ui/core/Input";
+import moment from "moment";
+import axios from "axios";
 
 export class Produto extends Component {
   constructor(props) {
     super(props);
     this.state = {
       age: "",
-      name: "ai"
+      name: "ai",
+      formFields: { from: "", to: "" },
+      prods: [],
+      prod: "",
+      count: []
     };
   }
 
@@ -44,100 +50,90 @@ export class Produto extends Component {
   };
   render() {
     const rows = [
-      this.createData("Low", 1),
-      this.createData("Medium", 2),
+      this.createData("Nº total pedidos", 1),
+      this.createData("% Pedidos Não Avaliados", 2),
       this.createData("High", 3),
       this.createData("Teste", 4)
     ];
 
-    function handleChange(event) {
-      this.setState(oldValues => ({
-        ...oldValues,
-        [event.target.name]: event.target.value
-      }));
-    }
     return (
       <div className={classes.root}>
         <Grid container spacing={3}>
-          <Grid item xs>
-            <form className={classes.container} noValidate>
+          <form style={{ display: "inline-flex", padding: "15px" }}>
+            <Grid item xs>
               <TextField
-                id="date"
+                id="from"
                 label="De"
                 type="date"
+                name="from"
+                //value={this.name}
                 defaultValue="2017-05-24"
                 className={classes.textField}
                 InputLabelProps={{
                   shrink: true
                 }}
+                formatDate={from => moment(from).format("DD-MM-YYYY")}
+                onChange={e => this.inputChangeHandler.call(this, e)}
+                value={this.state.formFields.from}
               />{" "}
-            </form>{" "}
-          </Grid>{" "}
-          <Grid item xs>
-            <form className={classes.container} noValidate>
+            </Grid>{" "}
+            <Grid item xs>
               <TextField
                 id="date"
                 label="Até"
                 type="date"
+                name="to"
+                //value={this.target.value}
                 defaultValue="2017-05-24"
                 className={classes.textField}
                 InputLabelProps={{
                   shrink: true
                 }}
+                formatDate={date => moment(date).format("DD-MM-YYYY")}
+                onChange={e => this.inputChangeHandler.call(this, e)}
+                value={this.state.formFields.to}
               />{" "}
-            </form>{" "}
-          </Grid>{" "}
-          <Grid item xs>
-            <Button variant="contained" className={classes.button}>
-              Submit{" "}
-            </Button>{" "}
-          </Grid>{" "}
-          <Grid item xs>
-            <FormControl className={dropdown.formControl}>
+            </Grid>{" "}
+            <Grid item xs>
+              <Button
+                type="button"
+                variant="contained"
+                className={classes.button}
+                onClick={e => this.getProductName(this.state.formFields)}
+              >
+                Submit{" "}
+              </Button>{" "}
+            </Grid>{" "}
+            <Grid item xs style={{ paddingLeft: "15px" }}>
               <InputLabel shrink htmlFor="age-label-placeholder">
                 Produto{" "}
               </InputLabel>{" "}
               <Select
-                value={this.state.age}
-                onChange={handleChange}
-                input={<Input name="age" id="age-label-placeholder" />}
+                value={this.state.prod}
+                //defaultValue={this.state.prod}
+                //onChange={this.handleChange}
+                onClick={e => {
+                  this.handleClick(e);
+                  this.getProdAPI();
+                }}
+                input={<Input name="prods" id="age-label-placeholder" />}
                 displayEmpty
-                name="age"
+                name="prods"
                 className={dropdown.selectEmpty}
               >
-                <MenuItem value="">
-                  <em> None </em>{" "}
+                <MenuItem value={this.state.prod}>
+                  <em> Selecione o produto </em>{" "}
                 </MenuItem>{" "}
-                <MenuItem value={10}> Ten </MenuItem>{" "}
-                <MenuItem value={20}> Twenty </MenuItem>{" "}
-                <MenuItem value={30}> Thirty </MenuItem>{" "}
+                {this.state.prods.map((item, key) => (
+                  <MenuItem value={item} key={key}>
+                    {" "}
+                    {item}{" "}
+                  </MenuItem>
+                ))}
               </Select>{" "}
-            </FormControl>{" "}
-          </Grid>
-          <Grid item xs>
-            {" "}
-            <FormControl className={dropdown.formControl}>
-              <InputLabel shrink htmlFor="age-label-placeholder">
-                Produto{" "}
-              </InputLabel>{" "}
-              <Select
-                value={this.state.age}
-                onChange={handleChange}
-                input={<Input name="age" id="age-label-placeholder" />}
-                displayEmpty
-                name="age"
-                className={dropdown.selectEmpty}
-              >
-                <MenuItem value="">
-                  <em> None </em>{" "}
-                </MenuItem>{" "}
-                <MenuItem value={10}> Ten </MenuItem>{" "}
-                <MenuItem value={20}> Twenty </MenuItem>{" "}
-                <MenuItem value={30}> Thirty </MenuItem>{" "}
-              </Select>{" "}
-            </FormControl>{" "}
-          </Grid>{" "}
-        </Grid>{" "}
+            </Grid>
+          </form>
+        </Grid>
         <Grid container spacing={3}>
           <Grid item xs>
             <Paper className={classes.root}>
@@ -239,6 +235,75 @@ export class Produto extends Component {
       </div>
     );
   }
+  inputChangeHandler(e) {
+    e.preventDefault();
+
+    let formFields = { ...this.state.formFields };
+    formFields[e.target.name] = e.target.value;
+    this.setState({
+      formFields
+    });
+  }
+
+  // handleChange = prod => {
+  //   this.setState({ prod });
+  //   prod.forEach(selectedOption =>
+  //     console.log(`Selected: ${selectedOption.value}`)
+  //   );
+  // };
+
+  handleClick = event => {
+    let value = event.target.value === undefined ? "ola" : event.target.value;
+
+    this.setState({
+      prod: value
+    });
+
+    return value;
+  };
+
+  getProdAPI = async e => {
+    let from = this.state.formFields.from;
+    let to = this.state.formFields.to;
+    //const value = e.target.value === undefined ? "ola" : this.state.prod;
+    //console.log(value);
+    let res;
+    try {
+      res = await axios.get(
+        `http://localhost:3000/issues/count?from=${from}&to=${to}&product_name=${value}`
+      );
+    } catch (error) {
+      console.log(error);
+    }
+
+    let data = res.data[0];
+    console.log(data);
+
+    this.setState({
+      count: data
+    });
+  };
+
+  getProductName = async (from, to) => {
+    from = this.state.formFields.from;
+    to = this.state.formFields.to;
+
+    let resProd;
+
+    try {
+      resProd = await axios.get(
+        `http://localhost:3000/issues/projects?from=${from}&to=${to}`
+      );
+      let data = resProd.data;
+      const dataProd = data.map(pn => pn._id.product_name);
+      console.log(dataProd);
+      this.setState({
+        prods: dataProd
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 }
 
 export default Produto;
