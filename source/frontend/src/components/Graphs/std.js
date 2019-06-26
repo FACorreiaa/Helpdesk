@@ -13,11 +13,11 @@ ReactFC.fcRoot(FusionCharts, TimeSeries);
 const jsonify = res => res.json();
 // This is the remote url to fetch the data.
 const dataFetch = fetch(
-  "https://s3.eu-central-1.amazonaws.com/fusion.store/ft/data/candlestick-chart-data.json"
+  "https://s3.eu-central-1.amazonaws.com/fusion.store/ft/data/area-chart-with-time-axis-data.json"
 ).then(jsonify);
 // This is the remote url to fetch the schema.
 const schemaFetch = fetch(
-  "https://s3.eu-central-1.amazonaws.com/fusion.store/ft/schema/candlestick-chart-schema.json"
+  "https://s3.eu-central-1.amazonaws.com/fusion.store/ft/schema/area-chart-with-time-axis-schema.json"
 ).then(jsonify);
 
 class Std extends Component {
@@ -25,25 +25,26 @@ class Std extends Component {
     super(props);
     this.state = {
       // Here timeseriesDs is the configuration object which we will pass as a prop to our ReactFC component.
+      //std.js must be 600x600
       timeseriesDs: {
         type: "timeseries",
         renderAt: "container",
         width: "700",
         height: "400",
         dataSource: {
+          chart: {
+            showLegend: 0
+          },
           caption: {
-            text: "Desvio Padrão"
+            text: "Standard Deviation"
           },
           yAxis: [
             {
               plot: {
-                open: "Open",
-                high: "High",
-                low: "Low",
-                close: "Close",
-                type: "candlestick"
+                value: "Daily Visitors",
+                type: "area"
               },
-              title: "Value"
+              title: "Daily Visitors (in thousand)"
             }
           ],
           // Initially data is set as null

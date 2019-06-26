@@ -36,12 +36,13 @@ export class Produto extends Component {
       formFields: { from: "", to: "" },
       prods: [],
       prod: "",
-      count: [
-        {
-          total: 0,
-          neval: 0
-        }
-      ]
+      count: [],
+      avgScore: [],
+      stdDevScore: [],
+      descrLevel: [],
+      valueLevel: [],
+      celerUser: [],
+      scoreUser: []
     };
   }
 
@@ -53,12 +54,29 @@ export class Produto extends Component {
       batatas
     };
   };
+
+  createData2 = (name, calories, fat) => {
+    return {
+      name,
+      calories,
+      fat
+    };
+  };
   render() {
     const rows = [
       this.createData("Nº total pedidos", this.state.count.total),
-      this.createData("% Pedidos Não Avaliados", 2),
-      this.createData("High", 3),
-      this.createData("Teste", 4)
+      this.createData("% Pedidos Não Avaliados", this.state.count.neval),
+      this.createData(
+        "Avaliação média Qualidade",
+        this.state.avgScore.avgScore
+      ),
+      this.createData("Desvio padrão", this.state.stdDevScore.stdDevScore)
+    ];
+
+    const rows2 = [
+      this.createData2(this.state.descrLevel[0], this.state.valueLevel[0]),
+      this.createData2(this.state.descrLevel[1], this.state.valueLevel[1]),
+      this.createData2(this.state.descrLevel[2], this.state.valueLevel[2])
     ];
 
     return (
@@ -172,15 +190,15 @@ export class Produto extends Component {
                 </TableHead>{" "}
                 <TableBody>
                   {" "}
-                  {rows.map(row => (
-                    <TableRow key={row.name}>
+                  {rows2.map(row2 => (
+                    <TableRow key={row2.name}>
                       <TableCell component="th" scope="row">
                         {" "}
-                        {row.name}{" "}
+                        {row2.name}{" "}
                       </TableCell>{" "}
-                      <TableCell align="right"> {row.calories} </TableCell>{" "}
-                      <TableCell align="right"> {row.fat} </TableCell>{" "}
-                      <TableCell align="right"> {row.carbs} </TableCell>{" "}
+                      <TableCell align="right"> {row2.calories} </TableCell>{" "}
+                      <TableCell align="right"> {row2.fat} </TableCell>{" "}
+                      <TableCell align="right"> {row2.carbs} </TableCell>{" "}
                     </TableRow>
                   ))}{" "}
                 </TableBody>{" "}
@@ -193,21 +211,15 @@ export class Produto extends Component {
             <Paper className={classes.paperClasses}>
               <List className={classes.root} subheader={<li />}>
                 {" "}
-                {[0].map(sectionId => (
-                  <li
-                    key={`section-${sectionId}`}
-                    className={classes.listSection}
+                <ListSubheader> {`Top users velocidade`} </ListSubheader>{" "}
+                {this.state.celerUser.map(item => (
+                  <ListItemText
+                    style={{ paddingLeft: "15px" }}
+                    primary={`${item}`}
                   >
-                    <ul className={classes.ul}>
-                      <ListSubheader> {`Top users por rating`} </ListSubheader>{" "}
-                      {[0, 1, 2].map(item => (
-                        <ListItem key={`item-${sectionId}-${item}`}>
-                          <ListItemText primary={`Item ${item}`} />{" "}
-                        </ListItem>
-                      ))}{" "}
-                    </ul>{" "}
-                  </li>
-                ))}{" "}
+                    {" "}
+                  </ListItemText>
+                ))}
               </List>{" "}
             </Paper>{" "}
           </Grid>{" "}
@@ -215,28 +227,19 @@ export class Produto extends Component {
             <Paper className={classes.paperClasses}>
               <List className={classes.root} subheader={<li />}>
                 {" "}
-                {[0].map(sectionId => (
-                  <li
-                    key={`section-${sectionId}`}
-                    className={classes.listSection}
+                <ListSubheader> {`Top users score`} </ListSubheader>{" "}
+                {this.state.scoreUser.map(item => (
+                  <ListItemText
+                    style={{ paddingLeft: "15px" }}
+                    primary={`${item}`}
                   >
-                    <ul className={classes.ul}>
-                      <ListSubheader> {`Top users por rating`} </ListSubheader>{" "}
-                      {[0, 1, 2].map(item => (
-                        <ListItem key={`item-${sectionId}-${item}`}>
-                          <ListItemText primary={`Item ${item}`} />{" "}
-                        </ListItem>
-                      ))}{" "}
-                    </ul>{" "}
-                  </li>
-                ))}{" "}
+                    {" "}
+                  </ListItemText>
+                ))}
               </List>{" "}
             </Paper>{" "}
           </Grid>{" "}
         </Grid>{" "}
-        {/* <Grid container spacing={4}>
-                                          <Prod />
-                                        </Grid>{" "} */}{" "}
       </div>
     );
   }
@@ -260,7 +263,7 @@ export class Produto extends Component {
   handleClick = async event => {
     let value = event.target.value;
 
-    await this.setState({
+    this.setState({
       prod: value
     });
     console.log("1: " + value);
@@ -279,6 +282,11 @@ export class Produto extends Component {
 
     //console.log(value);
     let res;
+    let rest;
+    let resStd;
+    let resLevel;
+    let resFast;
+    let resScore;
     try {
       res = await axios.get(
         `http://localhost:3000/issues/count?from=${from}&to=${to}&product_name=${prod}`
@@ -288,10 +296,46 @@ export class Produto extends Component {
     }
 
     let data = res.data[0];
-    console.log(data);
+    rest = await axios.get(
+      `http://localhost:3000/issues/scoreAvg?from=${from}&to=${to}&product_name=${prod}`
+    );
+    let dataavg = rest.data[0];
+    console.log("SKJSKJSK" + dataavg);
 
-    await this.setState({
-      count: data
+    resStd = await axios.get(
+      `http://localhost:3000/issues/scoreStd?from=${from}&to=${to}&product_name=${prod}`
+    );
+    let datastd = resStd.data[0];
+
+    resLevel = await axios.get(
+      `http://localhost:3000/issues/priority/responseTimeAvg?from=${from}&to=${to}&product_name=${prod}`
+    );
+    let dataLevel = resLevel.data;
+
+    const descrLevel = dataLevel.map(l => l._id.name);
+    const valueLevel = dataLevel.map(l => l.avgRTime);
+
+    resFast = await axios.get(
+      `http://localhost:3000/issues/collaborators/responseTimeAvg?from=${from}&to=${to}&product_name=${prod}`
+    );
+    let dataFast = resFast.data;
+
+    const celerUser = dataFast.map(df => df._id.name);
+
+    //
+    resScore = await axios.get(
+      `http://localhost:3000/issues/collaborators/scoreAvg?from=${from}&to=${to}&product_name=${prod}`
+    );
+    let dataScore = resScore.data;
+    const scoreUser = dataScore.map(df => df._id.name);
+    this.setState({
+      count: data,
+      avgScore: dataavg,
+      stdDevScore: datastd,
+      descrLevel: descrLevel,
+      valueLevel: valueLevel,
+      celerUser: celerUser,
+      scoreUser: scoreUser
     });
   };
 
@@ -308,7 +352,7 @@ export class Produto extends Component {
       let data = resProd.data;
       const dataProd = data.map(pn => pn._id.product_name);
       console.log(dataProd);
-      await this.setState({
+      this.setState({
         prods: dataProd
       });
     } catch (error) {
@@ -317,8 +361,6 @@ export class Produto extends Component {
   };
 
   componentDidMount = async () => {
-    await this.getProductName();
-    await this.getProdAPI();
     await this.getProductName();
   };
 }

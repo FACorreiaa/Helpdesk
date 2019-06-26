@@ -37,7 +37,10 @@ export class Global extends Component {
       age: "",
       name: "ai",
       formFields: { from: "", to: "" },
-      count: [],
+      count: {
+        total: "-",
+        neval: "-"
+      },
       avgScore: [],
       stdDevScore: [],
       descrLevel: [],
@@ -56,7 +59,7 @@ export class Global extends Component {
     };
   };
 
-  createData2 = (name, calories, fat, batatas) => {
+  createData2 = (name, calories, fat) => {
     return {
       name,
       calories,
