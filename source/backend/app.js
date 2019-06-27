@@ -32,6 +32,7 @@ app.use(passport.initialize());
 //COMENTEI
 // Connecting to the database
 mongoose.connect(process.env.MONGODB_URL, {
+  keepAlive: 1,
   useNewUrlParser: true
 }).then(() => {
   console.log("Successfully connected to the database");

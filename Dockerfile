@@ -50,4 +50,4 @@ EXPOSE 3000
 
 # start the app
 WORKDIR /app/backend
-CMD sleep 10; npm pooling; npm start
+CMD npm install && npm pooling && npm start
