@@ -37,7 +37,7 @@ export class Colaborador extends Component {
         from: "",
         to: ""
       },
-      prods: [],
+      prods: ["Sem nome"],
       prod: "",
       count: {
         total: "-",
@@ -99,7 +99,7 @@ export class Colaborador extends Component {
                 type="date"
                 name="from"
                 //value={this.name}
-                defaultValue="2017-05-24"
+                //defaultValue="2017-05-24"
                 className={classes.textField}
                 InputLabelProps={{
                   shrink: true
@@ -116,7 +116,7 @@ export class Colaborador extends Component {
                 type="date"
                 name="to"
                 //value={this.target.value}
-                defaultValue="2017-05-24"
+                //defaultValue="2017-05-24"
                 className={classes.textField}
                 InputLabelProps={{
                   shrink: true
@@ -154,13 +154,13 @@ export class Colaborador extends Component {
                   this.GetColabAPI(e);
                   this.handleClick(e);
                 }}
-                input={<Input name="prods" id="age-label-placeholder" />}
+                input={<Input name="prod" id="age-label-placeholder" />}
                 displayEmpty
-                name="prods"
+                name="prod"
                 className={dropdown.selectEmpty}
               >
                 <MenuItem value={this.state.prod}>
-                  <em> Selecione o produto </em>{" "}
+                  <em> Selecione o colaborador </em>{" "}
                 </MenuItem>{" "}
                 {this.state.prods.map((item, key) => (
                   <MenuItem value={item} key={key} name="prod">
@@ -249,7 +249,8 @@ export class Colaborador extends Component {
     this.setState({
       prod: value
     });
-    console.log("1: " + value);
+    console.log(this.state);
+
     return value;
   };
 
@@ -257,11 +258,7 @@ export class Colaborador extends Component {
     let from = this.state.formFields.from;
     let to = this.state.formFields.to;
     //let value = e.target.value;
-    let colab = this.state.prod;
-    console.log("from: " + from);
-    console.log("to: " + to);
-    console.log("prod" + this.state.prod);
-    console.log("prods" + this.state.prods);
+    let colab = e.target.value;
 
     //console.log(value);
     let res;
@@ -283,7 +280,6 @@ export class Colaborador extends Component {
       `http://localhost:3000/issues/scoreAvg?from=${from}&to=${to}&collaborator_name=${colab}`
     );
     let dataavg = rest.data[0];
-    console.log("SKJSKJSK" + dataavg);
 
     resStd = await axios.get(
       `http://localhost:3000/issues/scoreStd?from=${from}&to=${to}&collaborator_name=${colab}`
@@ -318,19 +314,23 @@ export class Colaborador extends Component {
         `http://localhost:3000/issues/collaborators?from=${from}&to=${to}`
       );
       let data = resProd.data;
-      console.log(data);
       const dataProd = data.map(pn => pn._id.name);
-      console.log(dataProd);
-      this.setState({
-        prods: dataProd
-      });
+      this.setState(
+        {
+          prods: dataProd
+        },
+        () => {
+          console.log("1" + this.state);
+        }
+      );
     } catch (error) {
       console.log(error);
     }
   };
 
   componentDidMount() {
-    this.getColabName();
+    //this.getColabName();
+    //this.GetColabAPI();
   }
 }
 

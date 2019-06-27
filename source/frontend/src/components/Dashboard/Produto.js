@@ -297,7 +297,7 @@ export class Produto extends Component {
     let from = this.state.formFields.from;
     let to = this.state.formFields.to;
     //let value = e.target.value;
-    let prod = this.state.prod;
+    let prod = e.target.value;
 
     //console.log(value);
     let res;
@@ -380,7 +380,7 @@ export class Produto extends Component {
   };
 
   componentDidMount() {
-    this.getProductName();
+    //this.getProductName();
   }
 }
 
