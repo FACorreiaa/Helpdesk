@@ -31,7 +31,7 @@ app.use(passport.initialize());
 
 //COMENTEI
 // Connecting to the database
-mongoose.connect(process.env.URI, {
+mongoose.connect(process.env.MONGODB_URL, {
   useNewUrlParser: true
 }).then(() => {
   console.log("Successfully connected to the database");
@@ -65,8 +65,6 @@ if (!isProduction) {
   app.use(errorHandler());
 }
 
-//Configure Mongoose
-//mongoose.connect("mongodb://localhost/helpdesk");
 mongoose.set("debug", true);
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
@@ -90,7 +88,7 @@ if (!isProduction) {
   });
 }
 
-app.listen(3000, () => console.log("Server running on http://localhost:3000/"));
+app.listen(process.env.PORT, () => console.log(`Server running on ${process.env.PORT}`));
 
 // cron.schedule('* * * * *', async () => {
 //   console.log('---------------------');

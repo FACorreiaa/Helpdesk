@@ -1,198 +1,174 @@
 /* eslint-disable no-console */
-const FORCED_EMAIL = "webprogwork@gmail.com";
+require('dotenv').config();
 
-const REDMINEAPI_BASE_URL = "https://redmine-mock-api.herokuapp.com/api/v1";
+const {
+    FORCED_EMAIL,
+    REDMINEAPI_BASE_URL,
+    API_BASE_URL, 
+    POOLING_DELTA_SECS,
+    MONGODB_URL
+} = process.env;
 
-const API_BASE_URL = "http://localhost:3000";
+const axios = require('axios');
 
-const axios = require("axios");
+const moment = require('moment');
 
-const moment = require("moment");
-
-const mongoose = require("mongoose");
-
-require('dotenv').config()
+const mongoose = require('mongoose');
 
 //
 // Models
 //
-const {
-  Issue
-} = require("./models/Issue");
+const { Issue } = require('./models/Issue');
 
-const {
-  sendEmailBySMTP
-} = require("./helpers/sendmail");
+const { sendEmailBySMTP } = require('./helpers/sendmail');
 
 async function main() {
-  try {
-    console.log("starting...");
+    try {
+        console.log('starting...');
 
-    //Connecting to the database
-    mongoose
-      .connect(process.env.URI, {
-        useNewUrlParser: true
-      })
-      .then(() => {
-        console.log("Successfully connected to the database");
-      })
-      .catch(err => {
-        console.log("Could not connect to the database. Exiting now...", err);
-        process.exit();
-      });
+        // Connecting to the database
+        await mongoose.connect(MONGODB_URL, {
+            useNewUrlParser: true
+        }).then(() => {
+            console.log("Successfully connected to the database");
+        }).catch(err => {
+            console.log('Could not connect to the database. Exiting now...', err);
+            process.exit();
+        });
+        console.log('connected to db');
 
-    console.log("connected to db");
 
-    //
-    // configure pooling timer
-    //
-    let timer0 = setInterval(() => {
-      getIssues(
-        moment()
-        .subtract(process.env.POOLING_DELTA_SECS, "seconds")
-        .toISOString()
-      );
-    }, 1000 * process.env.POOLING_DELTA_SECS);
-  } catch (err) {
-    console.log(err);
-  }
+        //
+        // configure pooling timer
+        //
+        let timer0 = setInterval(() => {
+            getIssues((moment().subtract(POOLING_DELTA_SECS, 'seconds').toISOString()))
+        }, 1000 * POOLING_DELTA_SECS);
+
+    } catch (err) {
+        console.log(err);
+    }
 }
 
 main();
 
-async function getUserFromRAPI(uid, forced_mail) {
-  let url = `${REDMINEAPI_BASE_URL}/users/${uid}`;
+async function getUserFromRAPI(uid) {
+    const url =`${REDMINEAPI_BASE_URL}/users/${uid}`;
 
-  if (forced_mail) url += `?forceMail=${forced_mail}`;
-
-  try {
-    let res = await axios({
-      method: "get",
-      url: url,
-      responseType: "json"
-    });
-    return res;
-  } catch (error) {
-    return new Error("getUserFromRAPI error");
-  }
+    try {
+        let res = await axios({
+            method: 'get',
+            url: url,
+            responseType: 'json'
+        });
+        return res;
+    } catch(error) {
+        return new Error("getUserFromRAPI error");
+    }
 }
 
 async function getIssues(dateAfter) {
-  console.log("dateAfter", dateAfter);
 
-  try {
-    //
-    // get issues new issues
-    //
-    let res = await axios({
-      method: "get",
-      url: `${REDMINEAPI_BASE_URL}/issues?after=${dateAfter}`,
-      responseType: "json"
-    });
-
-    const {
-      issues
-    } = res.data;
-
-    (() => {
-      let {
-        total_count,
-        offset,
-        limit
-      } = res.data;
-      console.log({
-        total_count,
-        offset,
-        limit
-      });
-    })();
-
-    for (let issue of issues) {
-      try {
+    try {
         //
-        // get assigned_to email
+        // get issues new issues 
         //
-        let res_assigned_to = await axios({
-          method: "get",
-          url: `${REDMINEAPI_BASE_URL}/users/${issue.assigned_to.id}`,
-          responseType: "json"
+        let res = await axios({
+            method: 'get',
+            url: `${REDMINEAPI_BASE_URL}/issues?after=${dateAfter}`,
+            responseType: 'json'
         });
 
-        //
-        // get author email
-        //
-        let res_author = await axios({
-          method: "get",
-          url: `${REDMINEAPI_BASE_URL}/users/${issue.author.id}`,
-          responseType: "json"
-        });
+        const {issues} = res.data;
 
-        //
-        // extract product_name, client_name from project.name
-        //
-        const [product_name, client_name] = issue.project.name
-          .slice(11)
-          .split("@");
+        (() => {
+            let {
+                total_count,
+                offset,
+                limit
+            } = res.data;
+            console.log({
+                total_count,
+                offset,
+                limit
+            });
+        })();
 
-        const project = {
-          id: issue.project.id,
-          product_name,
-          client_name
-        };
+        for (let issue of issues) {
+            try {
+                //
+                // get assigned_to email
+                //
+                let res_assigned_to = await axios({
+                    method: 'get',
+                    url: `${REDMINEAPI_BASE_URL}/users/${issue.assigned_to.id}`,
+                    responseType: 'json'
+                });
 
-        const dbIssue = new Issue({
+                //
+                // get author email
+                //
+                let res_author = await axios({
+                    method: 'get',
+                    url: `${REDMINEAPI_BASE_URL}/users/${issue.author.id}`,
+                    responseType: 'json'
+                });
 
-          //_id: default internal ObjectId
+                //
+                // extract product_name, client_name from project.name
+                //
+                const [product_name, client_name] = issue.project.name.slice(11).split('@');
+            
+                const project = {
+                    id: issue.project.id,
+                    product_name,
+                    client_name
+                };
+            
+                const dbIssue = new Issue({
+                    //
+                    // _id: default internal ObjectId
+                    //
+                    // fields with default values
+                    //
+                    // requested_on: {type: Date, default: new Date.now()}
+                    // evaluated_on: {type: Date, default: null},
+                    // score: {type: Number, default: 0}
 
-          //fields with default values
+                    //
+                    // data from issue
+                    //
+                    project: project,
+                    tracker: issue.tracker,
+                    priority: issue.priority,
+                    
+                    assigned_to: {
+                        id: issue.assigned_to.id,
+                        name: issue.assigned_to.name,
+                        email: res_assigned_to.data.mail
+                    },
 
-          // requested_on: {
-          //   type: Date,
-          //   default: new Date.now()
-          // },
-          // evaluated_on: {
-          //   type: Date,
-          //   default: null
-          // },
-          score: issue.score,
+                    author: {
+                        id: issue.author.id,
+                        name: issue.author.name,
+                        email: res_author.data.mail
+                    },
 
-          //
-          // data from issue
-          //
-          project: project,
-          tracker: issue.tracker,
-          priority: issue.priority,
+                    created_on: new Date(issue.created_on),
+                    closed_on: new Date(issue.closed_on),
 
-          assigned_to: {
-            id: issue.assigned_to.id,
-            name: issue.assigned_to.name,
-            email: res_assigned_to.data.mail
-          },
+                    subject: issue.subject,
+                    description: issue.description,
 
-          author: {
-            id: issue.author.id,
-            name: issue.author.name,
-            email: res_author.data.mail
-          },
+                });
 
-          created_on: new Date(issue.created_on),
-          closed_on: new Date(issue.closed_on),
+                const newIssue = await dbIssue.save();
 
-          subject: issue.subject,
-          description: issue.description,
+                //
+                // compose and send email to client
+                //
 
-          // compute response_time
-          response_time: new Date(issue.closed_on) - new Date(issue.created_on)
-        });
-
-        const newIssue = await dbIssue.save();
-        console.log('Pooling!');
-
-        //
-        // compose and send email to client
-        //
-
-        let message = `
+                let message = `
                     <h2>TrackerID:${newIssue.tracker.name}<h2>
                     <h2>Client:${newIssue.project.client_name}<h2>
                     <h2>Product:${newIssue.project.product_name}<h2>
@@ -203,39 +179,30 @@ async function getIssues(dateAfter) {
                     <h2>Description:</h2>
                     <p>${newIssue.description}</p>
                     <ul>
-                    <li><a href="${API_BASE_URL}/issues/${
-          newIssue.id
-        }/vote/1">Vote 1</a></li>
-                    <li><a href="${API_BASE_URL}/issues/${
-          newIssue.id
-        }/vote/2">Vote 2</a></li>
-                    <li><a href="${API_BASE_URL}/issues/${
-          newIssue.id
-        }/vote/3">Vote 3</a></li>
-                    <li><a href="${API_BASE_URL}/issues/${
-          newIssue.id
-        }/vote/4">Vote 4</a></li>
-                    <li><a href="${API_BASE_URL}/issues/${
-          newIssue.id
-        }/vote/5">Vote 5</a></li>
+                    <li><a href="${API_BASE_URL}/issues/${newIssue.id}/vote/1">Vote 1</a></li>
+                    <li><a href="${API_BASE_URL}/issues/${newIssue.id}/vote/2">Vote 2</a></li>
+                    <li><a href="${API_BASE_URL}/issues/${newIssue.id}/vote/3">Vote 3</a></li>
+                    <li><a href="${API_BASE_URL}/issues/${newIssue.id}/vote/4">Vote 4</a></li>
+                    <li><a href="${API_BASE_URL}/issues/${newIssue.id}/vote/5">Vote 5</a></li>
                     </ul>`;
 
-        console.log('*EMAIL*', message);
-
-        await sendEmailBySMTP({
-          subject: "Helpdesk issue evaluation",
-          message: message
-        });
-      } catch (err) {
-        console.log(err);
-      }
+                await sendEmailBySMTP({
+                    subject: "Helpdesk issue evaluation",
+                    message: message
+                });
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    } catch (error) {
+        //
+        // axios errors
+        //
+        if (error.response)
+            console.log('response error', error.response.status);
+        else if (error.request)
+            console.log('request error', error.request);
+        else
+            console.log('other error', error.message);
     }
-  } catch (error) {
-    //
-    // axios errors
-    //
-    if (error.response) console.log("response error", error.response.status);
-    else if (error.request) console.log("request error", error.request);
-    else console.log("other error", error.message);
-  }
 }

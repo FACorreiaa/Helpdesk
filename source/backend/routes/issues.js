@@ -1,773 +1,691 @@
-var express = require("express");
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-var {
-    Issue
-} = require("../models/Issue");
+const { Issue } = require('../models/Issue');
 
-//
-// TEMPORARY
-//
+const Joi = require('@hapi/joi');
 
-router.get("/", (req, res, next) => {
-    const {
-        from,
-        to
-    } = req.query;
+const schemaQueryParams = Joi.object().keys({
+    from: Joi.date(),
+    to: Joi.date().when('from', {
+        is: Joi.date().required(),
+        then: Joi.date().greater(Joi.ref('from')),
+    }),
+    skip: Joi.number().min(0),
+    limit: Joi.number().min(1),
+    product_name: Joi.string(),
+    collaborator_name: Joi.string()
+});
+
+router.get('/', (req, res, next) => {
+    const vres = Joi.validate(req.query, schemaQueryParams);
+
+    if (vres.error) {
+        res.status(400).send({error: vres.error.message});
+        return;
+    }
+
+    const {from, to, limit, skip} = vres.value;
 
     let match_criteria = [];
 
     if (from)
-        match_criteria.push({
-            created_on: {
-                $gte: new Date(from)
-            }
-        });
+        match_criteria.push({ created_on: { $gte: from } });
 
     if (to)
-        match_criteria.push({
-            created_on: {
-                $lte: new Date(to)
-            }
-        });
+        match_criteria.push({ created_on: { $lte: to } });
 
-    const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+    let match = match_criteria.length > 0 ? {$and: match_criteria} : {};
 
-    const skip = req.query.skip ? parseInt(req.query.skip) : 0;
+    let agg = Issue.aggregate([{$match: match}]);
 
-    let match =
-        match_criteria.length > 0 ?
-        {
-            $and: match_criteria
-        } :
-        {};
+    if (skip)
+        agg.skip(skip);
 
-    let pipeline = req.query.group ?
-        [{
-                $match: match
-            },
-            {
-                $group: {
-                    _id: `$${req.query.group}`
-                }
-            },
-            {
-                $skip: skip
-            },
-            {
-                $limit: limit
-            }
-        ] :
-        [{
-                $match: match
-            },
-            {
-                $skip: skip
-            },
-            {
-                $limit: limit
-            }
-        ];
+    if (limit)
+        agg.limit(limit);
 
-    let agg = Issue.aggregate(pipeline);
-
-    /*
-      let agg = Issue.aggregate([
-          {
-              $match: match
-          },
-          {
-              $skip: skip
-          },
-          {
-              $limit: limit
-          }
-      ]);
-      */
-
-    agg
-        .exec()
-        .then(results => res.send(results))
-        .catch(err =>
-            res.send({
-                error: err
-            })
-        );
+    agg.exec().then((results)=>res.send(results)).catch(next);
 });
+
 
 //
 // get projects from issues
 //
-router.get("/projects", (req, res, next) => {
-    const {
-        from,
-        to
-    } = req.query;
+router.get('/projects', (req, res, next) => {
+    const vres = Joi.validate(req.query, schemaQueryParams);
+
+    if (vres.error) {
+        res.status(400).send({error: vres.error.message});
+        return;
+    }
+
+    const {from, to, limit, skip} = vres.value;
 
     let match_criteria = [];
 
     if (from)
-        match_criteria.push({
-            created_on: {
-                $gte: new Date(from)
-            }
-        });
+        match_criteria.push({ created_on: { $gte: from } });
 
     if (to)
-        match_criteria.push({
-            created_on: {
-                $lte: new Date(to)
-            }
-        });
+        match_criteria.push({ created_on: { $lte: to } });
 
-    const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+    let match = match_criteria.length > 0 ? {$and: match_criteria} : {};
 
-    const skip = req.query.skip ? parseInt(req.query.skip) : 0;
+    let agg = Issue.aggremgate([{$match: match}, {$group: {_id: "$project"}}]);
 
-    let match =
-        match_criteria.length > 0 ?
-        {
-            $and: match_criteria
-        } :
-        {};
+    if (skip)
+        agg.skip(skip);
+    
+    if (limit)
+        agg.limit(limit);
 
-    let agg = Issue.aggregate([{
-            $match: match
-        },
-        {
-            $group: {
-                _id: "$project"
-            }
-        },
-        {
-            $skip: skip
-        },
-        {
-            $limit: limit
-        }
-    ]);
-
-    agg
-        .exec()
-        .then(results => res.send(results))
-        .catch(err =>
-            res.send({
-                error: err
-            })
-        );
+    agg.exec().then((results)=>res.send(results)).catch(next);
 });
+
 
 //
 // get colaborators from issues
 //
-router.get("/collaborators", (req, res, next) => {
-    const {
-        from,
-        to
-    } = req.query;
+router.get('/collaborators', (req, res, next) => {
+
+    const vres = Joi.validate(req.query, schemaQueryParams);
+
+    if (vres.error) {
+        res.status(400).send({error: vres.error.message});
+        return;
+    }
+
+    const {from, to, limit, skip} = vres.value;
 
     let match_criteria = [];
 
     if (from)
-        match_criteria.push({
-            created_on: {
-                $gte: new Date(from)
-            }
-        });
+        match_criteria.push({ created_on: { $gte: from } });
 
     if (to)
-        match_criteria.push({
-            created_on: {
-                $lte: new Date(to)
-            }
-        });
+        match_criteria.push({ created_on: { $lte: to } });
 
-    const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+    let match = match_criteria.length > 0 ? {$and: match_criteria} : {};
 
-    const skip = req.query.skip ? parseInt(req.query.skip) : 0;
+    let agg = Issue.aggregate([{$match: match}, {$group: {_id: "$assigned_to"}}]);
 
-    let match =
-        match_criteria.length > 0 ?
-        {
-            $and: match_criteria
-        } :
-        {};
+    if (skip)
+        agg.skip(skip);
 
-    let agg = Issue.aggregate([{
-            $match: match
-        },
-        {
-            $group: {
-                _id: "$assigned_to"
-            }
-        },
-        {
-            $skip: skip
-        },
-        {
-            $limit: limit
-        }
-    ]);
+    if (limit)
+        agg.limit(limit);
 
-    agg
-        .exec()
-        .then(results => res.send(results))
-        .catch(err =>
-            res.send({
-                error: err
-            })
-        );
+    agg.exec().then((results)=>res.send(results)).catch(next);
 });
 
 //
 // INDICATORS
-// /issues/...
+//
 
-router.get("/count", (req, res, next) => {
-    let {
-        product_name,
-        collaborator_name
-    } = req.query;
+router.get('/count', (req, res, next) => {
+    const vres = Joi.validate(req.query, schemaQueryParams);
 
-    let from = new Date(req.query.from);
-    let to = new Date(req.query.to);
+    if (vres.error) {
+        res.status(400).send({error: vres.error.message});
+        return;
+    }
 
-    let match_criteria = [{
-            created_on: {
-                $gte: from
+    const {product_name, collaborator_name, from, to} = vres.value;
+
+    let match_criteria = [];
+
+    if (from)
+        match_criteria.push({ created_on: { $gte: from } });
+
+    if (to)
+        match_criteria.push({ created_on: { $lte: to } });
+
+    if (product_name)
+        match_criteria.push({ 'project.product_name': product_name});
+    
+    if (collaborator_name)
+        match_criteria.push({ 'assigned_to.name': collaborator_name});
+
+    let match = match_criteria.length > 0 ? {$and: match_criteria} : {};
+
+    let agg = Issue.aggregate([
+        {
+            $match: match
+        },
+        {
+            $group: {
+                _id : null,
+                neval: { $sum: { $cond : [{ $eq : ["$score", 0] }, 1, 0] } },
+                total: { $sum: 1}
             }
         },
         {
-            created_on: {
-                $lte: to
+            $project: {
+                _id: 0
             }
         }
-    ];
-    if (product_name) {
-        match_criteria.push({
-            "project.product_name": product_name
-        });
-    }
-    if (collaborator_name) {
-        match_criteria.push({
-            "assigned_to.name": collaborator_name
-        });
+    ]);
+
+    agg.exec().then((results)=>res.send(results)).catch(next);
+});
+
+router.get('/priority/responseTimeAvg', (req, res, next) => {
+    const vres = Joi.validate(req.query, schemaQueryParams);
+
+    if (vres.error) {
+        res.status(400).send({error: vres.error.message});
+        return;
     }
 
-    let agg = Issue.aggregate([{
-            $match: {
-                $and: match_criteria
+    const {product_name, collaborator_name, from, to} = vres.value;
+
+    let match_criteria = [];
+
+    if (from)
+        match_criteria.push({ created_on: { $gte: new Date(from) } });
+
+    if (to)
+        match_criteria.push({ created_on: { $lte: new Date(to) } });
+
+    if (product_name)
+        match_criteria.push({ 'project.product_name': product_name});
+    
+    if (collaborator_name)
+        match_criteria.push({ 'assigned_to.name': collaborator_name});
+
+    let match = match_criteria.length > 0 ? {$and: match_criteria} : {};
+
+    let agg = Issue.aggregate([
+        {
+            $match: match
+        },
+        {
+            $addFields: {
+                rtime: { $subtract: ['$closed_on', '$created_on']}
             }
         },
         {
             $group: {
-                _id: null,
-                neval: {
-                    $sum: {
-                        $cond: [{
-                                $eq: ["$score", 0]
-                            },
-                            1,
-                            0
-                        ]
-                    }
+                _id : "$priority",
+                avgRTime: { $avg: "$rtime"},
+            }
+        }
+    ]);
+    agg.exec().then((results)=>res.send(results)).catch(next);
+});
+
+router.get('/scoreAvg', (req, res, next) => {
+    const vres = Joi.validate(req.query, schemaQueryParams);
+
+    if (vres.error) {
+        res.status(400).send({error: vres.error.message});
+        return;
+    }
+
+    const {product_name, collaborator_name, from, to} = vres.value;
+
+    let match_criteria = [{ score: { $ne: 0 } }];
+
+    if (from)
+        match_criteria.push({ created_on: { $gte: from } });
+
+    if (to)
+        match_criteria.push({ created_on: { $lte: to } });
+
+    if (product_name)
+        match_criteria.push({ 'project.product_name': product_name});
+    
+    if (collaborator_name)
+        match_criteria.push({ 'assigned_to.name': collaborator_name});
+
+    let match = match_criteria.length > 0 ? {$and: match_criteria} : {};
+
+    let agg = Issue.aggregate([
+        {
+            $match: match
+        },
+        {
+            $group: {
+                _id : null,
+                avgScore: { $avg: "$score" },
+            }
+        },
+        {
+            $project: {
+                _id: 0
+            }
+        }
+    ]);
+    agg.exec().then((results)=>res.send(results)).catch(next);
+});
+
+router.get('/scoreStd', (req, res, next) => {
+    const vres = Joi.validate(req.query, schemaQueryParams);
+
+    if (vres.error) {
+        res.status(400).send({error: vres.error.message});
+        return;
+    }
+
+    const {product_name, collaborator_name, from, to} = vres.value;
+
+    let match_criteria = [{ score: { $ne: 0 } }];
+
+    if (from)
+        match_criteria.push({ created_on: { $gte: from } });
+
+    if (to)
+        match_criteria.push({ created_on: { $lte: to } });
+
+    if (product_name)
+        match_criteria.push({ 'project.product_name': product_name});
+    
+    if (collaborator_name)
+        match_criteria.push({ 'assigned_to.name': collaborator_name});
+
+    let match = match_criteria.length > 0 ? {$and: match_criteria} : {};
+
+    let agg = Issue.aggregate([
+        {
+            $match: match
+        },
+        {
+            $group: {
+                _id : null,
+                stdDevScore: { $stdDevPop: "$score" }
+            }
+        },
+        {
+            $project: {
+                _id: 0
+            }
+        }
+    ]);
+    agg.exec().then((results)=>res.send(results)).catch(next);
+});
+
+router.get('/collaborators/responseTimeAvg', (req, res, next) => {
+    const vres = Joi.validate(req.query, schemaQueryParams);
+
+    if (vres.error) {
+        res.status(400).send({error: vres.error.message});
+        return;
+    }
+
+    const {product_name, from, to, limit} = vres.value;
+
+    let match_criteria = [];
+
+    if (from)
+        match_criteria.push({ created_on: { $gte: from } });
+
+    if (to)
+        match_criteria.push({ created_on: { $lte: to } });
+
+    if (product_name)
+        match_criteria.push({ 'project.product_name': product_name});
+    
+    let match = match_criteria.length > 0 ? {$and: match_criteria} : {};
+
+    let agg = Issue.aggregate([
+        {
+            $match: match
+        },
+        {
+            $addFields: {
+                rtime: { $subtract: ['$closed_on', '$created_on']}
+            }
+        },
+        {
+            $group: {
+                _id : '$assigned_to',
+                avgRTime: { $avg: "$rtime" }
+            }
+        },
+        {
+            $sort: {'avgRTime': 1}
+        },
+        {
+            $limit: limit || 10
+        }
+    ]);
+    agg.exec().then((results)=>res.send(results)).catch(next);
+});
+
+router.get('/collaborators/scoreAvg', (req, res, next) => {
+    const vres = Joi.validate(req.query, schemaQueryParams);
+
+    if (vres.error) {
+        res.status(400).send({error: vres.error.message});
+        return;
+    }
+
+    const {product_name, from, to, limit} = vres.value;
+
+    let match_criteria = [{ score: { $ne: 0 } }];
+
+    if (from)
+        match_criteria.push({ created_on: { $gte: from } });
+
+    if (to)
+        match_criteria.push({ created_on: { $lte: to } });
+
+    if (product_name)
+        match_criteria.push({ 'project.product_name': product_name});
+    
+    let match = match_criteria.length > 0 ? {$and: match_criteria} : {};
+
+    let agg = Issue.aggregate([
+        {
+            $match: match
+        },
+        {
+            $group: {
+                _id : '$assigned_to',
+                avgScore: { $avg: "$score" }
+            }
+        },
+        {
+            $sort: {'avgScore': -1}
+        },
+        {
+            $limit: limit || 10
+        }
+    ]);
+    agg.exec().then((results)=>res.send(results)).catch(next);
+});
+
+router.get('/periodic/count', (req, res, next) => {
+    const vres = Joi.validate(req.query, schemaQueryParams);
+
+    if (vres.error) {
+        res.status(400).send({error: vres.error.message});
+        return;
+    }
+
+    const {from, to, limit, skip} = vres.value;
+
+    let match_criteria = [];
+
+    if (from)
+        match_criteria.push({ created_on: { $gte: from } });
+
+    if (to)
+        match_criteria.push({ created_on: { $lte: to } });
+
+    let match = match_criteria.length > 0 ? {$and: match_criteria} : {};
+
+    let agg = Issue.aggregate([
+        {
+            $match: match
+        },
+        {
+            $project:
+            {
+                newDate: {
+                    year: { $year: "$created_on" },
+                    month: { $month: "$created_on" },
+                    day: { $dayOfMonth: "$created_on" }
+                }
+            }
+        },
+        {
+            $group: {
+                _id: '$newDate',
+                count: {$sum: 1}
+            }
+        },
+        {
+            $sort: {'_id': 1}
+        }
+    ]);
+
+    if (skip)
+        agg.skip(skip);
+    
+    if (limit)
+        agg.limit(limit);
+    
+    agg.exec().then((results)=>res.send(results)).catch(next);
+});
+
+router.get('/periodic/scoreAvg', (req, res, next) => {
+    const vres = Joi.validate(req.query, schemaQueryParams);
+
+    if (vres.error) {
+        res.status(400).send({error: vres.error.message});
+        return;
+    }
+
+    const {from, to, limit, skip} = vres.value;
+
+    let match_criteria = [{ score: { $ne: 0 } }];
+
+    if (from)
+        match_criteria.push({ created_on: { $gte: from } });
+
+    if (to)
+        match_criteria.push({ created_on: { $lte: to } });
+
+    let match = match_criteria.length > 0 ? {$and: match_criteria} : {};
+
+    let agg = Issue.aggregate([
+        {
+            $match: match
+        },
+        {
+            $project:
+            {
+                newDate: {
+                    year: { $year: "$created_on" },
+                    month: { $month: "$created_on" },
+                    day: { $dayOfMonth: "$created_on" }
                 },
-                total: {
-                    $sum: 1
-                }
-            }
-        },
-        {
-            $project: {
-                _id: 0
-            }
-        }
-    ]);
-
-    agg
-        .exec()
-        .then(results => res.send(results))
-        .catch(err =>
-            res.send({
-                error: err
-            })
-        );
-});
-
-router.get("/priority/responseTimeAvg", (req, res, next) => {
-    const {
-        product_name,
-        collaborator_name
-    } = req.query;
-
-    let from = new Date(req.query.from);
-    let to = new Date(req.query.to);
-
-    let match_criteria = [{
-            created_on: {
-                $gte: from
-            }
-        },
-        {
-            created_on: {
-                $lte: to
-            }
-        }
-    ];
-    if (product_name) {
-        match_criteria.push({
-            "project.product_name": product_name
-        });
-    }
-    if (collaborator_name) {
-        match_criteria.push({
-            "assigned_to.name": collaborator_name
-        });
-    }
-
-    let agg = Issue.aggregate([{
-            $match: {
-                $and: match_criteria
-            }
-        },
-        {
-            $group: {
-                _id: "$priority",
-                avgRTime: {
-                    $avg: "$response_time"
-                }
-            }
-        }
-    ]);
-    agg
-        .exec()
-        .then(results => res.send(results))
-        .catch(err =>
-            res.send({
-                error: err
-            })
-        );
-});
-
-router.get("/scoreAvg", (req, res, next) => {
-    const {
-        product_name,
-        collaborator_name
-    } = req.query;
-
-    let from = new Date(req.query.from);
-    let to = new Date(req.query.to);
-
-    let match_criteria = [{
-            created_on: {
-                $gte: from
-            }
-        },
-        {
-            created_on: {
-                $lte: to
-            }
-        },
-        {
-            score: {
-                $ne: 0
-            }
-        }
-    ];
-    if (product_name) {
-        match_criteria.push({
-            "project.product_name": product_name
-        });
-    }
-    if (collaborator_name) {
-        match_criteria.push({
-            "assigned_to.name": collaborator_name
-        });
-    }
-
-    let agg = Issue.aggregate([{
-            $match: {
-                $and: match_criteria
-            }
-        },
-        {
-            $group: {
-                _id: null,
-                avgScore: {
-                    $avg: "$score"
-                }
-            }
-        },
-        {
-            $project: {
-                _id: 0
-            }
-        }
-    ]);
-    agg
-        .exec()
-        .then(results => res.send(results))
-        .catch(err =>
-            res.send({
-                error: err
-            })
-        );
-});
-
-router.get("/scoreStd", (req, res, next) => {
-    const {
-        product_name,
-        collaborator_name
-    } = req.query;
-
-    let from = new Date(req.query.from);
-    let to = new Date(req.query.to);
-
-    let match_criteria = [{
-            created_on: {
-                $gte: from
-            }
-        },
-        {
-            created_on: {
-                $lte: to
-            }
-        },
-        {
-            score: {
-                $ne: 0
-            }
-        }
-    ];
-    if (product_name) {
-        match_criteria.push({
-            "project.product_name": product_name
-        });
-    }
-    if (collaborator_name) {
-        match_criteria.push({
-            "assigned_to.name": collaborator_name
-        });
-    }
-
-    let agg = Issue.aggregate([{
-            $match: {
-                $and: match_criteria
-            }
-        },
-        {
-            $group: {
-                _id: null,
-                stdDevScore: {
-                    $stdDevPop: "$score"
-                }
-            }
-        },
-        {
-            $project: {
-                _id: 0
-            }
-        }
-    ]);
-    agg
-        .exec()
-        .then(results => res.send(results))
-        .catch(err =>
-            res.send({
-                error: err
-            })
-        );
-});
-
-router.get("/collaborators/responseTimeAvg", (req, res, next) => {
-    const {
-        product_name
-    } = req.query;
-
-    let from = new Date(req.query.from);
-    let to = new Date(req.query.to);
-
-    const limit = req.query.limit ? parseInt(req.query.limit) : 10;
-
-    let match_criteria = [{
-            created_on: {
-                $gte: from
-            }
-        },
-        {
-            created_on: {
-                $lte: to
-            }
-        }
-    ];
-    if (product_name) {
-        match_criteria.push({
-            "project.product_name": product_name
-        });
-    }
-
-    let agg = Issue.aggregate([{
-            $match: {
-                $and: match_criteria
-            }
-        },
-        {
-            $group: {
-                _id: "$assigned_to",
-                avgRTime: {
-                    $avg: "$response_time"
-                }
-            }
-        },
-        {
-            $sort: {
-                avgRTime: 1
-            }
-        },
-        {
-            $limit: limit
-        }
-    ]);
-    agg
-        .exec()
-        .then(results => res.send(results))
-        .catch(err =>
-            res.send({
-                error: err
-            })
-        );
-});
-
-router.get("/collaborators/scoreAvg", (req, res, next) => {
-    const {
-        product_name
-    } = req.query;
-
-    let from = new Date(req.query.from);
-    let to = new Date(req.query.to);
-
-    const limit = req.query.limit ? parseInt(req.query.limit) : 10;
-
-    let match_criteria = [{
-            created_on: {
-                $gte: from
-            }
-        },
-        {
-            created_on: {
-                $lte: to
-            }
-        },
-        {
-            score: {
-                $ne: 0
-            }
-        }
-    ];
-    if (product_name) {
-        match_criteria.push({
-            "project.product_name": product_name
-        });
-    }
-
-    let agg = Issue.aggregate([{
-            $match: {
-                $and: match_criteria
-            }
-        },
-        {
-            $group: {
-                _id: "$assigned_to",
-                avgScore: {
-                    $avg: "$score"
-                }
-            }
-        },
-        {
-            $sort: {
-                avgScore: -1
-            }
-        },
-        {
-            $limit: limit
-        }
-    ]);
-    agg
-        .exec()
-        .then(results => res.send(results))
-        .catch(err =>
-            res.send({
-                error: err
-            })
-        );
-});
-
-router.get("/periodic/count", (req, res, next) => {
-    let from = new Date(req.query.from);
-    let to = new Date(req.query.to);
-
-    const limit = req.query.limit ? parseInt(req.query.limit) : 100;
-    const skip = req.query.skip ? parseInt(req.query.skip) : 0;
-
-    let agg = Issue.aggregate([{
-            $match: {
-                $and: [{
-                        created_on: {
-                            $gte: from
-                        }
-                    },
-                    {
-                        created_on: {
-                            $lte: to
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            $project: {
-                newDate: {
-                    year: {
-                        $year: "$created_on"
-                    },
-                    month: {
-                        $month: "$created_on"
-                    },
-                    day: {
-                        $dayOfMonth: "$created_on"
-                    }
-                    /*,
-                                                  hour: { $hour: "$created_on" },
-                                                  minutes: { $minute: "$created_on" }*/
-                }
+                score: 1
             }
         },
         {
             $group: {
                 _id: "$newDate",
-                count: {
-                    $sum: 1
-                }
+                avgScore: { $avg: "$score" }
             }
         },
         {
-            $sort: {
-                _id: 1
-            }
-        },
-        {
-            $skip: skip
-        },
-        {
-            $limit: limit
+            $sort: {'_id': 1}
         }
     ]);
-    agg
-        .exec()
-        .then(results => res.send(results))
-        .catch(err =>
-            res.send({
-                error: err
-            })
-        );
+
+    if (skip)
+        agg.skip(skip);
+    
+    if (limit)
+        agg.limit(limit);
+
+    agg.exec().then((results)=>res.send(results)).catch(next);
 });
 
-router.get("/periodic/scoreAvg", (req, res, next) => {
-    let from = new Date(req.query.from);
-    let to = new Date(req.query.to);
-
-    const limit = req.query.limit ? parseInt(req.query.limit) : 100;
-    const skip = req.query.skip ? parseInt(req.query.skip) : 0;
-
-    let agg = Issue.aggregate([{
-            $match: {
-                $and: [{
-                        created_on: {
-                            $gte: from
-                        }
-                    },
-                    {
-                        created_on: {
-                            $lte: to
-                        }
-                    },
-                    {
-                        score: {
-                            $ne: 0
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            $project: {
-                newDate: {
-                    year: {
-                        $year: "$created_on"
-                    },
-                    month: {
-                        $month: "$created_on"
-                    },
-                    day: {
-                        $dayOfMonth: "$created_on"
-                    }
-                    /*,
-                                                  hour: { $hour: "$created_on" },
-                                                  minutes: { $minute: "$created_on" }*/
-                }
-            }
-        },
-        {
-            $group: {
-                _id: "$newDate",
-                avgScore: {
-                    $avg: "$score"
-                }
-            }
-        },
-        {
-            $sort: {
-                _id: 1
-            }
-        },
-        {
-            $skip: skip
-        },
-        {
-            $limit: limit
-        }
-    ]);
-    agg
-        .exec()
-        .then(results => res.send(results))
-        .catch(err =>
-            res.send({
-                error: err
-            })
-        );
+const schemaVote = Joi.object().keys({
+    id: Joi.string().regex(/^[0-9a-fA-F]{24}$/,'ObjectId'),
+    score: Joi.number().min(1).max(5)
 });
 
-router.get("/:id/vote/:score", async function (req, res, next) {
-    let issue_id = req.params.id;
-    let score = parseInt(req.params.score);
+router.get('/:id/vote/:score', async function(req, res, next) {
+    const vres = Joi.validate(req.params, schemaVote);
 
-    console.log("*VOTE*", issue_id, score);
-    let issue = await Issue.findById(issue_id);
+    if (vres.error) {
+        res.status(400).send({error: vres.error.message});
+        return;
+    }
+
+    let {id, score} = vres.value;
+
+    let issue = await Issue.findById(id);
 
     if (issue.score === 0) {
         issue.score = score;
         issue.evaluated_on = new Date();
-
+        
         await issue.save();
 
-        let msg = `<h1>you voted ${score} for issue ${issue_id}</h1>`;
-        console.log(msg);
-        res.send(msg);
+        let msg = `<h1>you voted ${score} for issue ${id}</h1>`;
+        res.send(msg);    
     } else {
-        let msg = `<h1>Allready voted for ${issue_id}</h1>`;
-        console.log(msg);
-        res.send(msg);
+        let msg = `<h1>Allready voted for ${id}</h1>`;
+        res.send(msg);    
     }
+});
+
+const schemaIssueID = Joi.object().keys({
+    id: Joi.string().regex(/^[0-9a-fA-F]{24}$/,'ObjectId').required()
+});
+
+router.get('/:id', (req, res, next) => {
+    const vres = Joi.validate(req.params, schemaIssueID);
+
+    if (vres.error) {
+        res.status(400).send({error: vres.error.message});
+        return;
+    }
+
+    const {id} = vres.value;
+
+    Issue.findById(id).then((issue)=>res.send(issue)).catch(next);
+});
+
+
+/*
+{
+    "_id": "5d0e01510e23c103fb50939a", // {type: mongoose.Schema.Types.ObjectId, auto: true}
+    "requested_on": "2019-06-22T10:21:38.890Z", // {type: Date, default: new Date.now()}
+    "evaluated_on": "2019-06-22T10:24:03.660Z", // {type: Date, default: null},
+    "score": 5, // {type: Number, default: 0}
+    "project": {
+        "id": 970, // {type: number, required: true}
+        "product_name": "NexusDB", // {type: String}
+        "client_name": "YRC Worldwide Inc." // {type: String}
+    },
+    "tracker": {
+        "id": 45, // {type: Number, required: true}
+        "name": "Report" // {type: String}
+    },
+    "priority": {
+        "id": 5, // {type: Number, required: true}
+        "name": "High (1 day)" // {type: String}
+    },
+    "assigned_to": {
+        "id": 5, // {type: Number}
+        "name": "João Pires", // {type: String}
+        "email": "jpires@jibs.pt" // {type: String}
+    },
+    "author": {
+        "id": 48, // {type: Number}
+        "name": "Maria Ribeiro", // {type: String}
+        "email": "webprogwork@gmail.com" // {type: String}
+    },
+    "created_on": "2019-06-13T01:15:11.740Z", // {type: Date}
+    "closed_on": "2019-06-22T10:23:18.636Z", // {type: Date}
+    "subject": "Lorem ipsum dolor sit amet, consectetur adipisicing elit.", // {type: String}
+    "description": "Lorem ipsum dolor sit amet, consectetur adipisicing elit. ...", // {type: String}
+}
+*/
+
+//
+// CREATE
+//
+
+const schemaNewIssue = Joi.object().keys({
+    requested_on: Joi.date(),
+    evaluated_on: Joi.date(),
+    score: Joi.number().min(0).max(5),
+    project: Joi.object().keys({
+        id: Joi.number(),
+        product_name: Joi.string(),
+        client_name: Joi.string()
+    }),
+    tracker: Joi.object().keys({
+        id: Joi.number(),
+        name: Joi.string()
+    }),
+    priority: Joi.object().keys({
+        id: Joi.number(),
+        name: Joi.string()
+    }),
+    assigned_to: Joi.object().keys({
+        id: Joi.number(),
+        name: Joi.string(),
+        email: Joi.string().email()
+    }),
+    author: Joi.object().keys({
+        id: Joi.number(),
+        name: Joi.string(),
+        email: Joi.string().email()
+    }),
+    created_on: Joi.date(),
+    closed_on: Joi.date(),
+    subject: Joi.string(),
+    description: Joi.string()
+});
+
+router.post('/', async (req, res, next) => {
+    const vres = Joi.validate(req.body, schemaNewIssue);
+
+    if (vres.error) {
+        res.status(400).send({error: vres.error.message});
+        return;
+    }
+
+    console.log('***POST***', vres.value);
+    const issue = new Issue(vres.value);
+
+    const newIssue = await issue.save();
+
+    res.send(newIssue);
+});
+
+//
+// PUT
+//
+router.put('/:id', (req, res, next) => {
+    const vres = Joi.validate(req.params, schemaIssueID);
+
+    if (vres.error) {
+        res.status(400).send({error: vres.error.message});
+        return;
+    }
+    const {id} = vres.value;
+
+    res.send({message: `PUT ${id} not yet implemented`});
+});
+
+//
+// PATCH
+//
+router.patch('/:id', (req, res, next) => {
+    const vres = Joi.validate(req.params, schemaIssueID);
+
+    if (vres.error) {
+        res.status(400).send({error: vres.error.message});
+        return;
+    }
+    const {id} = vres.value;
+
+    res.send({message: `PATCH ${id} not yet implemented`});
+});
+
+//
+// DELETE
+//
+router.delete('/:id', (req, res, next) => {
+    const vres = Joi.validate(req.params, schemaIssueID);
+
+    if (vres.error) {
+        res.status(400).send({error: vres.error.message});
+        return;
+    }
+    const {id} = vres.value;
+
+    res.send({message: `DELETE ${id} not yet implemented`});
 });
 
 module.exports = router;

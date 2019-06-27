@@ -1,4 +1,8 @@
+require('dotenv').config();
+
 const nodemailer = require('nodemailer');
+
+const {FORCED_EMAIL, EMAIL_ACCOUNT, EMAIL_PASSWORD}  = process.env;
 
 function sendEmailBySMTP(email) {
 
@@ -6,21 +10,19 @@ function sendEmailBySMTP(email) {
         host: 'smtp.gmail.com',
         port: 465,
         secure: true, // use SSL, 
-        // you can try with TLS, but port is then 587
         auth: {
-            user: 'webprogwork@gmail.com', // Your email id
-            pass: '$IPCA@2019#' // Your password
+            user: EMAIL_ACCOUNT,
+            pass: EMAIL_PASSWORD
         }
     };
 
     const transporter = nodemailer.createTransport(smtpConfig);
 
     const mailOptions = {
-        from: 'webprogwork@gmail.com', // sender address
-        to: 'webprogwork@gmail.com', // list of receivers
-        subject: email.subject, // Subject line
-        //text: request.text, //, // plaintext body
-        html: email.message // You can choose to send an HTML body instead
+        from: EMAIL_ACCOUNT, 
+        to: FORCED_EMAIL,
+        subject: email.subject,
+        html: email.message
     }
 
     return transporter.sendMail(mailOptions);
