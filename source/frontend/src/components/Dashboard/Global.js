@@ -36,17 +36,20 @@ export class Global extends Component {
     this.state = {
       age: "",
       name: "ai",
-      formFields: { from: "", to: "" },
+      formFields: {
+        from: "",
+        to: ""
+      },
       count: {
         total: "-",
         neval: "-"
       },
-      avgScore: [],
-      stdDevScore: [],
-      descrLevel: [],
-      valueLevel: [],
-      celerUser: [],
-      scoreUser: []
+      avgScore: { avgScore: "-" },
+      stdDevScore: { stdDevScore: "-" },
+      descrLevel: ["Descrição Nivel"],
+      valueLevel: ["Tempo médio"],
+      celerUser: ["Top Utilizadores"],
+      scoreUser: ["Top Utilizadores"]
     };
   }
 
@@ -93,7 +96,12 @@ export class Global extends Component {
     return (
       <div className={classes.root}>
         <Grid container spacing={3}>
-          <form style={{ display: "inline-flex", padding: "15px" }}>
+          <form
+            style={{
+              display: "inline-flex",
+              padding: "15px"
+            }}
+          >
             <Grid item xs>
               <TextField
                 id="from"
@@ -138,7 +146,7 @@ export class Global extends Component {
                 Submit{" "}
               </Button>{" "}
             </Grid>{" "}
-          </form>
+          </form>{" "}
         </Grid>{" "}
         <Grid container spacing={3}>
           <Grid item xs>
@@ -197,12 +205,14 @@ export class Global extends Component {
                 <ListSubheader> {`Top users velocidade`} </ListSubheader>{" "}
                 {this.state.celerUser.map(item => (
                   <ListItemText
-                    style={{ paddingLeft: "15px" }}
+                    style={{
+                      paddingLeft: "15px"
+                    }}
                     primary={`${item}`}
                   >
                     {" "}
                   </ListItemText>
-                ))}
+                ))}{" "}
               </List>{" "}
             </Paper>{" "}
           </Grid>{" "}
@@ -213,19 +223,21 @@ export class Global extends Component {
                 <ListSubheader> {`Top users score`} </ListSubheader>{" "}
                 {this.state.scoreUser.map(item => (
                   <ListItemText
-                    style={{ paddingLeft: "15px" }}
+                    style={{
+                      paddingLeft: "15px"
+                    }}
                     primary={`${item}`}
                   >
                     {" "}
                   </ListItemText>
-                ))}
+                ))}{" "}
               </List>{" "}
             </Paper>{" "}
           </Grid>{" "}
         </Grid>{" "}
         {/* <Grid container spacing={4}>
-                                          <Prod />
-                                        </Grid>{" "} */}{" "}
+                                                  <Prod />
+                                                </Grid>{" "} */}{" "}
       </div>
     );
   }
@@ -233,7 +245,9 @@ export class Global extends Component {
   inputChangeHandler(e) {
     e.preventDefault();
 
-    let formFields = { ...this.state.formFields };
+    let formFields = {
+      ...this.state.formFields
+    };
     formFields[e.target.name] = e.target.value;
     this.setState({
       formFields

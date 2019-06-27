@@ -39,11 +39,14 @@ export class Colaborador extends Component {
       },
       prods: [],
       prod: "",
-      count: ["-"],
-      avgScore: ["-"],
-      stdDevScore: ["-"],
-      descrLevel: ["-"],
-      valueLevel: ["-"]
+      count: {
+        total: "-",
+        neval: "-"
+      },
+      avgScore: { avgScore: "-" },
+      stdDevScore: { stdDevScore: "-" },
+      descrLevel: ["Descrição Nivel"],
+      valueLevel: ["Tempo médio"]
     };
   }
 
@@ -326,9 +329,9 @@ export class Colaborador extends Component {
     }
   };
 
-  componentDidMount = async () => {
-    await this.getColabName();
-  };
+  componentDidMount() {
+    this.getColabName();
+  }
 }
 
 export default Colaborador;

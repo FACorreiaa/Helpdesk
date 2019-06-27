@@ -33,16 +33,22 @@ export class Produto extends Component {
     this.state = {
       age: "",
       name: "ai",
-      formFields: { from: "", to: "" },
+      formFields: {
+        from: "",
+        to: ""
+      },
       prods: [],
       prod: "",
-      count: [],
-      avgScore: [],
-      stdDevScore: [],
-      descrLevel: [],
-      valueLevel: [],
-      celerUser: [],
-      scoreUser: []
+      count: {
+        total: "-",
+        neval: "-"
+      },
+      avgScore: { avgScore: "-" },
+      stdDevScore: { stdDevScore: "-" },
+      descrLevel: ["Descrição Nivel"],
+      valueLevel: ["Tempo médio"],
+      celerUser: ["Top Utilizadores"],
+      scoreUser: ["Top Utilizadores"]
     };
   }
 
@@ -82,7 +88,12 @@ export class Produto extends Component {
     return (
       <div className={classes.root}>
         <Grid container spacing={3}>
-          <form style={{ display: "inline-flex", padding: "15px" }}>
+          <form
+            style={{
+              display: "inline-flex",
+              padding: "15px"
+            }}
+          >
             <Grid item xs>
               <TextField
                 id="from"
@@ -127,12 +138,18 @@ export class Produto extends Component {
                 Submit{" "}
               </Button>{" "}
             </Grid>{" "}
-            <Grid item xs style={{ paddingLeft: "15px" }}>
+            <Grid
+              item
+              xs
+              style={{
+                paddingLeft: "15px"
+              }}
+            >
               <InputLabel shrink htmlFor="age-label-placeholder">
                 Produto{" "}
               </InputLabel>{" "}
               <Select
-                value={this.state.prod}
+                value={this.state.prods}
                 //defaultValue={this.state.prod}
                 //onChange={this.handleChange}
                 onChange={e => {
@@ -152,11 +169,11 @@ export class Produto extends Component {
                     {" "}
                     {item}{" "}
                   </MenuItem>
-                ))}
+                ))}{" "}
               </Select>{" "}
-            </Grid>
-          </form>
-        </Grid>
+            </Grid>{" "}
+          </form>{" "}
+        </Grid>{" "}
         <Grid container spacing={3}>
           <Grid item xs>
             <Paper className={classes.root}>
@@ -214,12 +231,14 @@ export class Produto extends Component {
                 <ListSubheader> {`Top users velocidade`} </ListSubheader>{" "}
                 {this.state.celerUser.map(item => (
                   <ListItemText
-                    style={{ paddingLeft: "15px" }}
+                    style={{
+                      paddingLeft: "15px"
+                    }}
                     primary={`${item}`}
                   >
                     {" "}
                   </ListItemText>
-                ))}
+                ))}{" "}
               </List>{" "}
             </Paper>{" "}
           </Grid>{" "}
@@ -230,12 +249,14 @@ export class Produto extends Component {
                 <ListSubheader> {`Top users score`} </ListSubheader>{" "}
                 {this.state.scoreUser.map(item => (
                   <ListItemText
-                    style={{ paddingLeft: "15px" }}
+                    style={{
+                      paddingLeft: "15px"
+                    }}
                     primary={`${item}`}
                   >
                     {" "}
                   </ListItemText>
-                ))}
+                ))}{" "}
               </List>{" "}
             </Paper>{" "}
           </Grid>{" "}
@@ -246,7 +267,9 @@ export class Produto extends Component {
   inputChangeHandler(e) {
     e.preventDefault();
 
-    let formFields = { ...this.state.formFields };
+    let formFields = {
+      ...this.state.formFields
+    };
     formFields[e.target.name] = e.target.value;
     this.setState({
       formFields
@@ -275,10 +298,6 @@ export class Produto extends Component {
     let to = this.state.formFields.to;
     //let value = e.target.value;
     let prod = this.state.prod;
-    console.log("from: " + from);
-    console.log("to: " + to);
-    console.log("prod" + this.state.prod);
-    console.log("prods" + this.state.prods);
 
     //console.log(value);
     let res;
@@ -360,9 +379,9 @@ export class Produto extends Component {
     }
   };
 
-  componentDidMount = async () => {
-    await this.getProductName();
-  };
+  componentDidMount() {
+    this.getProductName();
+  }
 }
 
 export default Produto;
