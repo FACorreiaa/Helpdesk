@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon app.js"
+    "pooling": "node pooling-process.js",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "dependencies": {
     "@hapi/joi": "^15.1.0",
