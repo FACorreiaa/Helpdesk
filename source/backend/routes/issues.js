@@ -72,7 +72,7 @@ router.get('/projects', (req, res, next) => {
 
     let match = match_criteria.length > 0 ? {$and: match_criteria} : {};
 
-    let agg = Issue.aggremgate([{$match: match}, {$group: {_id: "$project"}}]);
+    let agg = Issue.aggregate([{$match: match}, {$group: {_id: "$project"}}]);
 
     if (skip)
         agg.skip(skip);
