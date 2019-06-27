@@ -11,7 +11,10 @@ class Std extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      formFields: { from: "", to: "" },
+      formFields: {
+        from: "",
+        to: ""
+      },
       //score: 1,
       //finalDate: ["2019-06-01"]
       labels: [],
@@ -70,7 +73,12 @@ class Std extends Component {
   render() {
     return (
       <div>
-        <form style={{ display: "inline-flex", padding: "15px" }}>
+        <form
+          style={{
+            display: "inline-flex",
+            padding: "15px"
+          }}
+        >
           <Grid item xs>
             <TextField
               id="from"
@@ -116,8 +124,7 @@ class Std extends Component {
             </Button>{" "}
           </Grid>{" "}
         </form>
-
-        <Line data={this.state} />
+        <Line data={this.state} />{" "}
       </div>
     );
   }
@@ -132,7 +139,7 @@ class Std extends Component {
       );
       let data = res.data;
       let finalDate = [];
-      let score = data.map(s => s.count);
+      let score = data.map(s => s.avgScore);
       let date = data.map(d =>
         finalDate.push(`${d._id.year}-${d._id.month}-${d._id.day}`)
       );
@@ -172,7 +179,9 @@ class Std extends Component {
   inputChangeHandler(e) {
     e.preventDefault();
 
-    let formFields = { ...this.state.formFields };
+    let formFields = {
+      ...this.state.formFields
+    };
     formFields[e.target.name] = e.target.value;
     this.setState({
       formFields
