@@ -315,24 +315,30 @@ export class Produto extends Component {
     }
 
     let data = res.data[0];
+    console.log(data);
+    if (data === undefined) data = 0;
+
     rest = await axios.get(
       `http://localhost:3000/issues/scoreAvg?from=${from}&to=${to}&product_name=${prod}`
     );
     let dataavg = rest.data[0];
-    console.log("SKJSKJSK" + dataavg);
+    if (dataavg === undefined) dataavg = 0;
 
     resStd = await axios.get(
       `http://localhost:3000/issues/scoreStd?from=${from}&to=${to}&product_name=${prod}`
     );
     let datastd = resStd.data[0];
+    if (datastd === undefined) datastd = 0;
 
     resLevel = await axios.get(
       `http://localhost:3000/issues/priority/responseTimeAvg?from=${from}&to=${to}&product_name=${prod}`
     );
     let dataLevel = resLevel.data;
 
-    const descrLevel = dataLevel.map(l => l._id.name);
-    const valueLevel = dataLevel.map(l => l.avgRTime);
+    let descrLevel = dataLevel.map(l => l._id.name);
+    let valueLevel = dataLevel.map(l => l.avgRTime);
+    if (descrLevel === undefined) descrLevel = 0;
+    if (valueLevel === undefined) valueLevel = 0;
 
     resFast = await axios.get(
       `http://localhost:3000/issues/collaborators/responseTimeAvg?from=${from}&to=${to}&product_name=${prod}`
@@ -340,13 +346,16 @@ export class Produto extends Component {
     let dataFast = resFast.data;
 
     const celerUser = dataFast.map(df => df._id.name);
+    if (celerUser === undefined) celerUser = 0;
 
     //
     resScore = await axios.get(
       `http://localhost:3000/issues/collaborators/scoreAvg?from=${from}&to=${to}&product_name=${prod}`
     );
     let dataScore = resScore.data;
-    const scoreUser = dataScore.map(df => df._id.name);
+    let scoreUser = dataScore.map(df => df._id.name);
+    if (scoreUser === undefined) scoreUser = 0;
+
     this.setState({
       count: data,
       avgScore: dataavg,
@@ -370,7 +379,6 @@ export class Produto extends Component {
       );
       let data = resProd.data;
       const dataProd = data.map(pn => pn._id.product_name);
-      console.log(dataProd);
       this.setState({
         prods: dataProd
       });

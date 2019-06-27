@@ -276,23 +276,29 @@ export class Colaborador extends Component {
     }
 
     let data = res.data[0];
+    if (data === undefined) data = 0;
+
     rest = await axios.get(
       `http://localhost:3000/issues/scoreAvg?from=${from}&to=${to}&collaborator_name=${colab}`
     );
     let dataavg = rest.data[0];
+    if (dataavg === undefined) dataavg = 0;
 
     resStd = await axios.get(
       `http://localhost:3000/issues/scoreStd?from=${from}&to=${to}&collaborator_name=${colab}`
     );
     let datastd = resStd.data[0];
+    if (datastd === undefined) datastd = 0;
 
     resLevel = await axios.get(
       `http://localhost:3000/issues/priority/responseTimeAvg?from=${from}&to=${to}&collaborator_name=${colab}`
     );
     let dataLevel = resLevel.data;
 
-    const descrLevel = dataLevel.map(l => l._id.name);
-    const valueLevel = dataLevel.map(l => l.avgRTime);
+    let descrLevel = dataLevel.map(l => l._id.name);
+    let valueLevel = dataLevel.map(l => l.avgRTime);
+    if (descrLevel === undefined) descrLevel = 0;
+    if (valueLevel === undefined) valueLevel = 0;
 
     this.setState({
       count: data,
