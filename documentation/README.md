@@ -170,4 +170,14 @@ Pode aceder ao link [GitHub](https://github.com/Knox316/Helpdesk) onde está o c
 Login
 [![Login](/documentation/Login.png "Login")](https://github.com/Knox316/Helpdesk/edit/master/documentation/login.png)
 Cadastro de novo utilizador
-[![Login](/documentation/Create Login.png "Login")](https://github.com/Knox316/Helpdesk/edit/master/documentation/Create Login.png)
+[![Cadastro](/documentation/CreateLogin.png "Cadastro")](https://github.com/Knox316/Helpdesk/edit/master/documentation/CreateLogin.png)
+Dashboard com Indicadores Globais
+[![Global](/documentation/Global.png "Global")](https://github.com/Knox316/Helpdesk/edit/master/documentation/Global.png)
+Dashboard com Indicadores por Colaborador
+[![Colaborador](/documentation/Colaborador.png "Colaborador")](https://github.com/Knox316/Helpdesk/edit/master/documentation/Colaborador.png)
+Dashboard com Indicadores por Produto
+[![Produto](/documentation/Produto.png "Produto")](https://github.com/Knox316/Helpdesk/edit/master/documentation/Produto.png)
+Dashboard com Indicadores Temporais
+[![Temporal](/documentation/Temporal.png "Temporal")](https://github.com/Knox316/Helpdesk/edit/master/documentation/Temporal.png)
+
+
