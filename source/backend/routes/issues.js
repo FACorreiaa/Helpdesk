@@ -510,7 +510,7 @@ const schemaVote = Joi.object().keys({
     score: Joi.number().min(1).max(5)
 });
 
-router.get('/:id/vote/:score', async function(req, res, next) {
+router.get('/:id/vote/:score', async (req, res, next) => {
     const vres = Joi.validate(req.params, schemaVote);
 
     if (vres.error) {
@@ -520,19 +520,24 @@ router.get('/:id/vote/:score', async function(req, res, next) {
 
     let {id, score} = vres.value;
 
-    let issue = await Issue.findById(id);
+    try {
+        let issue = await Issue.findById(id);
 
-    if (issue.score === 0) {
-        issue.score = score;
-        issue.evaluated_on = new Date();
-        
-        await issue.save();
+        if (issue.score === 0) {
+            issue.score = score;
+            issue.evaluated_on = new Date();
+            
+            await issue.save();
 
-        let msg = `<h1>you voted ${score} for issue ${id}</h1>`;
-        res.send(msg);    
-    } else {
-        let msg = `<h1>Allready voted for ${id}</h1>`;
-        res.send(msg);    
+            let msg = `<h1>you voted ${score} for issue ${id}</h1>`;
+            res.send(msg);    
+        } else {
+            let msg = `<h1>Allready voted for ${id}</h1>`;
+            res.send(msg);    
+        }
+    }
+    catch (e) {
+        next(e);
     }
 });
 
@@ -540,7 +545,7 @@ const schemaIssueID = Joi.object().keys({
     id: Joi.string().regex(/^[0-9a-fA-F]{24}$/,'ObjectId').required()
 });
 
-router.get('/:id', (req, res, next) => {
+router.get('/:id', async (req, res, next) => {
     const vres = Joi.validate(req.params, schemaIssueID);
 
     if (vres.error) {
@@ -550,7 +555,15 @@ router.get('/:id', (req, res, next) => {
 
     const {id} = vres.value;
 
-    Issue.findById(id).then((issue)=>res.send(issue)).catch(next);
+    try {
+        let issue = await Issue.findById(id);
+        if (issue)
+            res.send(issue);
+        else
+            res.status(404).send({error: 'not found'});
+    } catch(e) {
+        next(e);
+    }
 });
 
 
@@ -594,7 +607,7 @@ router.get('/:id', (req, res, next) => {
 // CREATE
 //
 
-const schemaNewIssue = Joi.object().keys({
+const schemaIssueBody = Joi.object().keys({
     requested_on: Joi.date(),
     evaluated_on: Joi.date(),
     score: Joi.number().min(0).max(5),
@@ -628,64 +641,126 @@ const schemaNewIssue = Joi.object().keys({
 });
 
 router.post('/', async (req, res, next) => {
-    const vres = Joi.validate(req.body, schemaNewIssue);
+    const vres = Joi.validate(req.body, schemaIssueBody);
 
     if (vres.error) {
         res.status(400).send({error: vres.error.message});
         return;
     }
 
-    console.log('***POST***', vres.value);
-    const issue = new Issue(vres.value);
+    try {
+        const issue = new Issue(vres.value);
 
-    const newIssue = await issue.save();
+        const newIssue = await issue.save();
 
-    res.send(newIssue);
+        res.status(201).send(newIssue);
+    }
+    catch(e) {
+        next(e);
+    }
 });
 
 //
 // PUT
 //
-router.put('/:id', (req, res, next) => {
-    const vres = Joi.validate(req.params, schemaIssueID);
+router.put('/:id', async (req, res, next) => {
+    const vres_id = Joi.validate(req.params, schemaIssueID);
 
-    if (vres.error) {
-        res.status(400).send({error: vres.error.message});
+    if (vres_id.error) {
+        res.status(400).send({error: vres_id.error.message});
         return;
     }
-    const {id} = vres.value;
+    const {id} = vres_id.value;
+ 
+    //
+    // BODY VALIDATION
+    //
+    let vres_body = Joi.validate(req.body, schemaIssueBody);
+    if (vres_body.error) {
+        res.status(400).send({error: vres_body.error.message});
+        return;
+    }
 
-    res.send({message: `PUT ${id} not yet implemented`});
+    let body = vres_body.value;
+
+    try {
+        let issue = await Issue.findByIdAndUpdate(id, body, {new: true});
+
+        if (issue) {
+            res.send(issue);
+        }
+        else {
+            res.status(404).send({error: 'not found'});
+        }
+    }
+    catch(e) {
+        next(e);
+    }
 });
 
 //
 // PATCH
 //
-router.patch('/:id', (req, res, next) => {
-    const vres = Joi.validate(req.params, schemaIssueID);
+router.patch('/:id', async (req, res, next) => {
+    const vres_id = Joi.validate(req.params, schemaIssueID);
 
-    if (vres.error) {
-        res.status(400).send({error: vres.error.message});
+    if (vres_id.error) {
+        res.status(400).send({error: vres_id.error.message});
         return;
     }
-    const {id} = vres.value;
+    const {id} = vres_id.value;
+ 
+    //
+    // BODY VALIDATION
+    //
+    let vres_body = Joi.validate(req.body, schemaIssueBody);
+    if (vres_body.error) {
+        res.status(400).send({error: vres_body.error.message});
+        return;
+    }
 
-    res.send({message: `PATCH ${id} not yet implemented`});
+    let body = vres_body.value;
+
+    try {
+        let issue = await Issue.findByIdAndUpdate(id, body, {new: true});
+
+        if (issue) {
+            res.send(issue);
+        }
+        else {
+            res.status(404).send({error: 'not found'});
+        }
+    }
+    catch(e) {
+        next(e);
+    }
 });
 
 //
 // DELETE
 //
-router.delete('/:id', (req, res, next) => {
-    const vres = Joi.validate(req.params, schemaIssueID);
+router.delete('/:id', async (req, res, next) => {
+    const vres_id = Joi.validate(req.params, schemaIssueID);
 
-    if (vres.error) {
-        res.status(400).send({error: vres.error.message});
+    if (vres_id.error) {
+        res.status(400).send({error: vres_id.error.message});
         return;
     }
-    const {id} = vres.value;
+    const {id} = vres_id.value;
 
-    res.send({message: `DELETE ${id} not yet implemented`});
+    try {
+        let issue = await Issue.findByIdAndDelete(id);
+
+        if (issue) {
+            res.send(issue);
+        }
+        else {
+            res.status(404).send({error: 'not found'});
+        }
+    }
+    catch(e) {
+        next(e);
+    }
 });
 
 module.exports = router;
