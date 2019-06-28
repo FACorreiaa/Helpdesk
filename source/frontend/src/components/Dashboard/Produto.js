@@ -4,7 +4,6 @@ import Grid from "@material-ui/core/Grid";
 import { classes } from "../constants/dashboard";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import Prod from "../Graphs/prod_example_v3";
 import List from "@material-ui/core/List";
 
 import ListItem from "@material-ui/core/ListItem";
@@ -308,7 +307,7 @@ export class Produto extends Component {
     let resScore;
     try {
       res = await axios.get(
-        `http://localhost:3000/issues/count?from=${from}&to=${to}&product_name=${prod}`
+        `/issues/count?from=${from}&to=${to}&product_name=${prod}`
       );
     } catch (error) {
       console.log(error);
@@ -319,19 +318,19 @@ export class Produto extends Component {
     if (data === undefined) data = 0;
 
     rest = await axios.get(
-      `http://localhost:3000/issues/scoreAvg?from=${from}&to=${to}&product_name=${prod}`
+      `/issues/scoreAvg?from=${from}&to=${to}&product_name=${prod}`
     );
     let dataavg = rest.data[0];
     if (dataavg === undefined) dataavg = 0;
 
     resStd = await axios.get(
-      `http://localhost:3000/issues/scoreStd?from=${from}&to=${to}&product_name=${prod}`
+      `/issues/scoreStd?from=${from}&to=${to}&product_name=${prod}`
     );
     let datastd = resStd.data[0];
     if (datastd === undefined) datastd = 0;
 
     resLevel = await axios.get(
-      `http://localhost:3000/issues/priority/responseTimeAvg?from=${from}&to=${to}&product_name=${prod}`
+      `/issues/priority/responseTimeAvg?from=${from}&to=${to}&product_name=${prod}`
     );
     let dataLevel = resLevel.data;
 
@@ -341,7 +340,7 @@ export class Produto extends Component {
     if (valueLevel === undefined) valueLevel = 0;
 
     resFast = await axios.get(
-      `http://localhost:3000/issues/collaborators/responseTimeAvg?from=${from}&to=${to}&product_name=${prod}`
+      `/issues/collaborators/responseTimeAvg?from=${from}&to=${to}&product_name=${prod}`
     );
     let dataFast = resFast.data;
 
@@ -350,7 +349,7 @@ export class Produto extends Component {
 
     //
     resScore = await axios.get(
-      `http://localhost:3000/issues/collaborators/scoreAvg?from=${from}&to=${to}&product_name=${prod}`
+      `/issues/collaborators/scoreAvg?from=${from}&to=${to}&product_name=${prod}`
     );
     let dataScore = resScore.data;
     let scoreUser = dataScore.map(df => df._id.name);
@@ -374,9 +373,7 @@ export class Produto extends Component {
     let resProd;
 
     try {
-      resProd = await axios.get(
-        `http://localhost:3000/issues/projects?from=${from}&to=${to}`
-      );
+      resProd = await axios.get(`/issues/projects?from=${from}&to=${to}`);
       let data = resProd.data;
       const dataProd = data.map(pn => pn._id.product_name);
       this.setState({

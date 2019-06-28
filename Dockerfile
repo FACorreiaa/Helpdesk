@@ -17,16 +17,23 @@
 
 FROM node:10-slim
 
+EXPOSE 3000
+
+ARG NODE_ENV
+
+
 # Set environment variable with the address of the REST API
 # This will be used during the build stage of react app 
 #ENV REACT_APP_REST_API http://localhost:80/v1/cities/
 
 # make dir
-RUN mkdir /app
+RUN mkdir -p /app
+WORKDIR /app/backend
+WORKDIR /app/frontend
 
 # copy apps to container
-ADD ./source/backend /app/backend
-ADD ./source/frontend /app/frontend
+COPY ./source/backend/ /app/backend
+COPY ./source/frontend/ /app/frontend
 
 # install dependencies
 WORKDIR /app/backend
@@ -43,11 +50,10 @@ RUN cp -r /app/frontend/build/* /app/backend/public
 # clean up
 RUN rm -rf /app/frontend
 
-EXPOSE 3000
 
 # set environment for production
 #ENV NODE_ENV=production
 
 # start the app
 WORKDIR /app/backend
-CMD npm install && npm pooling && npm start
+CMD ["npm", "run", "docker:start"]

@@ -1,0 +1,6 @@
+version: "3"
+services:
+  app:
+    command: npm run docker
+    environment:
+      - NODE_ENV=production

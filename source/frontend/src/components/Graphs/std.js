@@ -135,7 +135,7 @@ class Std extends Component {
 
     try {
       let res = await axios.get(
-        `http://localhost:3000/issues/periodic/scoreAvg?from=${from}&to=${to}`
+        `/issues/periodic/scoreAvg?from=${from}&to=${to}`
       );
       let data = res.data;
       let finalDate = [];

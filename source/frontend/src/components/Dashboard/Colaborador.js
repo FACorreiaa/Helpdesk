@@ -4,12 +4,7 @@ import Grid from "@material-ui/core/Grid";
 import { classes } from "../constants/dashboard";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import Prod from "../Graphs/prod_example_v3";
-import List from "@material-ui/core/List";
 
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListSubheader from "@material-ui/core/ListSubheader";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -269,7 +264,7 @@ export class Colaborador extends Component {
     let resScore;
     try {
       res = await axios.get(
-        `http://localhost:3000/issues/count?from=${from}&to=${to}&collaborator_name=${colab}`
+        `/issues/count?from=${from}&to=${to}&collaborator_name=${colab}`
       );
     } catch (error) {
       console.log(error);
@@ -279,19 +274,19 @@ export class Colaborador extends Component {
     if (data === undefined) data = 0;
 
     rest = await axios.get(
-      `http://localhost:3000/issues/scoreAvg?from=${from}&to=${to}&collaborator_name=${colab}`
+      `/issues/scoreAvg?from=${from}&to=${to}&collaborator_name=${colab}`
     );
     let dataavg = rest.data[0];
     if (dataavg === undefined) dataavg = 0;
 
     resStd = await axios.get(
-      `http://localhost:3000/issues/scoreStd?from=${from}&to=${to}&collaborator_name=${colab}`
+      `/issues/scoreStd?from=${from}&to=${to}&collaborator_name=${colab}`
     );
     let datastd = resStd.data[0];
     if (datastd === undefined) datastd = 0;
 
     resLevel = await axios.get(
-      `http://localhost:3000/issues/priority/responseTimeAvg?from=${from}&to=${to}&collaborator_name=${colab}`
+      `/issues/priority/responseTimeAvg?from=${from}&to=${to}&collaborator_name=${colab}`
     );
     let dataLevel = resLevel.data;
 
@@ -316,9 +311,7 @@ export class Colaborador extends Component {
     let resProd;
 
     try {
-      resProd = await axios.get(
-        `http://localhost:3000/issues/collaborators?from=${from}&to=${to}`
-      );
+      resProd = await axios.get(`/issues/collaborators?from=${from}&to=${to}`);
       let data = resProd.data;
       const dataProd = data.map(pn => pn._id.name);
       this.setState(

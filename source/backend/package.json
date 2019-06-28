@@ -5,7 +5,10 @@
   "scripts": {
     "pooling": "node pooling-process.js",
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "test": "cross-env NODE_ENV=production npm install && start npm run pooling && start npm run pooling",
+    "docker:start": "cross-env NODE_ENV=production pm2-docker node ./source/backend/pooling-process.js && cross-env NODE_ENV=production pm2-docker node ./source/backend/app.js",
+    "docker": "cross-env NODE_ENV=production pm2 node ./source/backend/app.js"
   },
   "dependencies": {
     "@hapi/joi": "^15.1.0",
@@ -35,9 +38,13 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
+    "pm2": "^3.5.1",
     "request": "^2.88.0",
     "swagger-ui-express": "^4.0.6",
     "validator": "^11.0.0",
     "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "cross-env": "^5.2.0"
   }
 }
