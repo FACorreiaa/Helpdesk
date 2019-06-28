@@ -143,6 +143,9 @@ O frontend da solucação foi desenvolvido através da biblioteca em React.
 8. tela de logout
 ##### Modelo de interação
 * Diagrama de como as diferentes páginas interagem entre si
+
+[![Login](/documentation/Login.png "Login")](https://github.com/Knox316/Helpdesk/edit/master/documentation/login.png)
+
 **FAZER COM FLUXOGRAMA**
 ### 3. Bonificações - Login
 A solução tem o uso de login de um utilizador, via token, com adicional de adicionar novo utilizador para aceder à gestão dos indicadores.
