@@ -1,9 +1,10 @@
 # Instruções
 
-Explicar quais os comandos que devo correr para ter acesso à aplicação, e.g.:
+Comandos para correr e ter acesso à aplicação:
 
-1. Executar o comando `docker-compose up -d`
-2. Abrir o browser em `http://localhost:3000`
+1. Executar o comando `docker-compose up`
+2. Esperar
+3. Abrir o browser em `http://localhost:3000`
 
 ## Pastas
 

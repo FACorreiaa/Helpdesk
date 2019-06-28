@@ -4,30 +4,16 @@ import Grid from "@material-ui/core/Grid";
 import { classes } from "../constants/dashboard";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import Nivo from "../Graphs/nivo";
 import List from "@material-ui/core/List";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import FormControl from "@material-ui/core/FormControl";
-import Select from "@material-ui/core/Select";
-import NativeSelect from "@material-ui/core/NativeSelect";
-import InputBase from "@material-ui/core/InputBase";
-import { formClasses } from "../constants/bootsrap";
-import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListSubheader from "@material-ui/core/ListSubheader";
-import OutlinedInput from "@material-ui/core/OutlinedInput";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { paperTable } from "../constants/table";
-import Input from "@material-ui/core/Input";
-import { dropdown } from "../constants/dropdown";
 import moment from "moment";
 import axios from "axios";
-import { spacing } from "@material-ui/system";
 
 export class Global extends Component {
   constructor() {
@@ -252,8 +238,6 @@ export class Global extends Component {
     this.setState({
       formFields
     });
-    console.log(formFields.from);
-    console.log(formFields.to);
   }
 
   getGlobalState = async (from, to) => {
@@ -267,43 +251,50 @@ export class Global extends Component {
     let resFast;
     let resScore;
     try {
-      res = await axios.get(
-        `http://localhost:3000/issues/count?from=${from}&to=${to}`
-      );
+      res = await axios.get(`/issues/count?from=${from}&to=${to}`);
       let data = res.data[0];
-      console.log(data.neval);
 
-      rest = await axios.get(
-        `http://localhost:3000/issues/scoreAvg?from=${from}&to=${to}`
-      );
+      if (data === undefined) data = 0;
+
+      rest = await axios.get(`/issues/scoreAvg?from=${from}&to=${to}`);
       let dataavg = rest.data[0];
 
-      resStd = await axios.get(
-        `http://localhost:3000/issues/scoreStd?from=${from}&to=${to}`
-      );
+      console.log(dataavg);
+      if (dataavg === undefined) dataavg = 0;
+
+      resStd = await axios.get(`/issues/scoreStd?from=${from}&to=${to}`);
       let datastd = resStd.data[0];
+      if (datastd === undefined) datastd = 0;
 
       resLevel = await axios.get(
-        `http://localhost:3000/issues/priority/responseTimeAvg?from=${from}&to=${to}`
+        `/issues/priority/responseTimeAvg?from=${from}&to=${to}`
       );
       let dataLevel = resLevel.data;
 
-      const descrLevel = dataLevel.map(l => l._id.name);
-      const valueLevel = dataLevel.map(l => l.avgRTime);
+      let descrLevel = dataLevel.map(l => l._id.name);
+      let valueLevel = dataLevel.map(l => l.avgRTime);
+
+      if (descrLevel === undefined) descrLevel = 0;
+      if (valueLevel === undefined) valueLevel = 0;
 
       resFast = await axios.get(
-        `http://localhost:3000/issues/collaborators/responseTimeAvg?from=${from}&to=${to}`
+        `/issues/collaborators/responseTimeAvg?from=${from}&to=${to}`
       );
       let dataFast = resFast.data;
 
-      const celerUser = dataFast.map(df => df._id.name);
+      let celerUser = dataFast.map(df => df._id.name);
+
+      if (celerUser === undefined) celerUser = 0;
 
       //
       resScore = await axios.get(
-        `http://localhost:3000/issues/collaborators/scoreAvg?from=${from}&to=${to}`
+        `/issues/collaborators/scoreAvg?from=${from}&to=${to}`
       );
       let dataScore = resScore.data;
-      const scoreUser = dataScore.map(df => df._id.name);
+      let scoreUser = dataScore.map(df => df._id.name);
+
+      if (scoreUser === undefined) scoreUser = 0;
+
       this.setState({
         count: data,
         avgScore: dataavg,
@@ -313,7 +304,6 @@ export class Global extends Component {
         celerUser: celerUser,
         scoreUser: scoreUser
       });
-      console.log(this.state.scoreUser);
     } catch (error) {
       console.log(error);
     }

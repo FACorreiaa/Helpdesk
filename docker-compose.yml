@@ -1,16 +1,51 @@
-version: "2"
-
+version: "3.1"
 services:
-  web:
+  app:
     build: .
-    volumes:
-      - ./:/app
+    image: dbwebapp_image
+    container_name: dbwebapp
+    restart: unless-stopped
+    working_dir: /app/backend
+    command: npm run start
+    environment:
+      - PORT=3000
+      - MONGODB_URL=mongodb://mongodb:27017/helpdesk
+    # volumes:
+    #   - .:/app
     ports:
-      - "3000:3000"
-    links:
-      - mongo
+      - 3000:3000
+    depends_on:
+      - mongodb
 
-  mongo:
+  pooling-process:
+    build: .
+    image: dbwebapp_image
+    container_name: pooling
+    restart: unless-stopped
+    working_dir: /app/backend
+    command: npm run pooling
+    environment:
+      - PORT=3000
+      - MONGODB_URL=mongodb://mongodb:27017/helpdesk
+    # volumes:
+    #   - .:/app
+    depends_on:
+      - mongodb
+
+  mongodb:
     image: mongo
+    container_name: mongodb
     ports:
       - "27017:27017"
+    restart: unless-stopped
+#docker ps
+#docker stop pooling
+#docker ps
+#docker start pooling
+#docker ps
+#docker exec -it dbwebapp bash
+#pwd
+#docker images
+#docker rmi <idimages>
+#docker-compose down
+#docker-compose up

@@ -4,7 +4,7 @@ require('dotenv').config();
 const {
     FORCED_EMAIL,
     REDMINEAPI_BASE_URL,
-    API_BASE_URL, 
+    API_BASE_URL,
     POOLING_DELTA_SECS,
     MONGODB_URL
 } = process.env;
@@ -18,9 +18,13 @@ const mongoose = require('mongoose');
 //
 // Models
 //
-const { Issue } = require('./models/Issue');
+const {
+    Issue
+} = require('./models/Issue');
 
-const { sendEmailBySMTP } = require('./helpers/sendmail');
+const {
+    sendEmailBySMTP
+} = require('./helpers/sendmail');
 
 async function main() {
     try {
@@ -28,6 +32,7 @@ async function main() {
 
         // Connecting to the database
         await mongoose.connect(MONGODB_URL, {
+            keepAlive: 1,
             useNewUrlParser: true
         }).then(() => {
             console.log("Successfully connected to the database");
@@ -53,7 +58,7 @@ async function main() {
 main();
 
 async function getUserFromRAPI(uid) {
-    const url =`${REDMINEAPI_BASE_URL}/users/${uid}`;
+    const url = `${REDMINEAPI_BASE_URL}/users/${uid}`;
 
     try {
         let res = await axios({
@@ -62,7 +67,7 @@ async function getUserFromRAPI(uid) {
             responseType: 'json'
         });
         return res;
-    } catch(error) {
+    } catch (error) {
         return new Error("getUserFromRAPI error");
     }
 }
@@ -79,7 +84,9 @@ async function getIssues(dateAfter) {
             responseType: 'json'
         });
 
-        const {issues} = res.data;
+        const {
+            issues
+        } = res.data;
 
         (() => {
             let {
@@ -118,13 +125,13 @@ async function getIssues(dateAfter) {
                 // extract product_name, client_name from project.name
                 //
                 const [product_name, client_name] = issue.project.name.slice(11).split('@');
-            
+
                 const project = {
                     id: issue.project.id,
                     product_name,
                     client_name
                 };
-            
+
                 const dbIssue = new Issue({
                     //
                     // _id: default internal ObjectId
@@ -141,7 +148,7 @@ async function getIssues(dateAfter) {
                     project: project,
                     tracker: issue.tracker,
                     priority: issue.priority,
-                    
+
                     assigned_to: {
                         id: issue.assigned_to.id,
                         name: issue.assigned_to.name,

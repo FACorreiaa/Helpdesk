@@ -4,10 +4,8 @@ import Grid from "@material-ui/core/Grid";
 import { classes } from "../constants/dashboard";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import Prod from "../Graphs/prod_example_v3";
 import List from "@material-ui/core/List";
 
-import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import Table from "@material-ui/core/Table";
@@ -15,12 +13,8 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { paperClasses } from "../constants/graph";
-import { paperTable } from "../constants/table";
 import { dropdown } from "../constants/dropdown";
 import MenuItem from "@material-ui/core/MenuItem";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import Input from "@material-ui/core/Input";
@@ -308,45 +302,54 @@ export class Produto extends Component {
     let resScore;
     try {
       res = await axios.get(
-        `http://localhost:3000/issues/count?from=${from}&to=${to}&product_name=${prod}`
+        `/issues/count?from=${from}&to=${to}&product_name=${prod}`
       );
     } catch (error) {
       console.log(error);
     }
 
     let data = res.data[0];
+    console.log(data);
+    if (data === undefined) data = 0;
+
     rest = await axios.get(
-      `http://localhost:3000/issues/scoreAvg?from=${from}&to=${to}&product_name=${prod}`
+      `/issues/scoreAvg?from=${from}&to=${to}&product_name=${prod}`
     );
     let dataavg = rest.data[0];
-    console.log("SKJSKJSK" + dataavg);
+    if (dataavg === undefined) dataavg = 0;
 
     resStd = await axios.get(
-      `http://localhost:3000/issues/scoreStd?from=${from}&to=${to}&product_name=${prod}`
+      `/issues/scoreStd?from=${from}&to=${to}&product_name=${prod}`
     );
     let datastd = resStd.data[0];
+    if (datastd === undefined) datastd = 0;
 
     resLevel = await axios.get(
-      `http://localhost:3000/issues/priority/responseTimeAvg?from=${from}&to=${to}&product_name=${prod}`
+      `/issues/priority/responseTimeAvg?from=${from}&to=${to}&product_name=${prod}`
     );
     let dataLevel = resLevel.data;
 
-    const descrLevel = dataLevel.map(l => l._id.name);
-    const valueLevel = dataLevel.map(l => l.avgRTime);
+    let descrLevel = dataLevel.map(l => l._id.name);
+    let valueLevel = dataLevel.map(l => l.avgRTime);
+    if (descrLevel === undefined) descrLevel = 0;
+    if (valueLevel === undefined) valueLevel = 0;
 
     resFast = await axios.get(
-      `http://localhost:3000/issues/collaborators/responseTimeAvg?from=${from}&to=${to}&product_name=${prod}`
+      `/issues/collaborators/responseTimeAvg?from=${from}&to=${to}&product_name=${prod}`
     );
     let dataFast = resFast.data;
 
     const celerUser = dataFast.map(df => df._id.name);
+    if (celerUser === undefined) celerUser = 0;
 
     //
     resScore = await axios.get(
-      `http://localhost:3000/issues/collaborators/scoreAvg?from=${from}&to=${to}&product_name=${prod}`
+      `/issues/collaborators/scoreAvg?from=${from}&to=${to}&product_name=${prod}`
     );
     let dataScore = resScore.data;
-    const scoreUser = dataScore.map(df => df._id.name);
+    let scoreUser = dataScore.map(df => df._id.name);
+    if (scoreUser === undefined) scoreUser = 0;
+
     this.setState({
       count: data,
       avgScore: dataavg,
@@ -365,12 +368,9 @@ export class Produto extends Component {
     let resProd;
 
     try {
-      resProd = await axios.get(
-        `http://localhost:3000/issues/projects?from=${from}&to=${to}`
-      );
+      resProd = await axios.get(`/issues/projects?from=${from}&to=${to}`);
       let data = resProd.data;
       const dataProd = data.map(pn => pn._id.product_name);
-      console.log(dataProd);
       this.setState({
         prods: dataProd
       });

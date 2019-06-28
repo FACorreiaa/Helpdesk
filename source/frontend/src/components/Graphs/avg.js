@@ -106,7 +106,7 @@ class Avg extends Component {
 
     try {
       let res = await axios.get(
-        `http://localhost:3000/issues/periodic/count?from=${from}&to=${to}`
+        `/issues/periodic/count?from=${from}&to=${to}`
       );
       let data = res.data;
       let finalDate = [];
