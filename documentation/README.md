@@ -142,11 +142,7 @@ O frontend da solucação foi desenvolvido através da biblioteca em React.
 7. tela com indicador temporal
 8. tela de logout
 ##### Modelo de interação
-* Diagrama de como as diferentes páginas interagem entre si
-
-[![Login](/documentation/Login.png "Login")](https://github.com/Knox316/Helpdesk/edit/master/documentation/login.png)
-
-**FAZER COM FLUXOGRAMA**
+No appendix pode-se consultar as telas de interação do frontend.
 ### 3. Bonificações - Login
 A solução tem o uso de login de um utilizador, via token, com adicional de adicionar novo utilizador para aceder à gestão dos indicadores.
 * Trabalhos adicionais realizados: **VERIFICAR SE TEM ALGO A MAIS DO QUE FOI PEDIDO**
@@ -170,5 +166,8 @@ Como trabalho futuro, tem-se a questão de indicadores na forma de gráfica, uma
 #### Source code
 Pode aceder ao link [GitHub](https://github.com/Knox316/Helpdesk) onde está o código fonte completo e atualizado conforme enviado.
 
-
-```
+#### Imagens das telas do frontend
+Login
+[![Login](/documentation/Login.png "Login")](https://github.com/Knox316/Helpdesk/edit/master/documentation/login.png)
+Cadastro de novo utilizador
+[![Login](/documentation/Create Login.png "Login")](https://github.com/Knox316/Helpdesk/edit/master/documentation/Create Login.png)
