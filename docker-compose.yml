@@ -38,3 +38,14 @@ services:
     ports:
       - "27017:27017"
     restart: unless-stopped
+#docker ps
+#docker stop pooling
+#docker ps
+#docker start pooling
+#docker ps
+#docker exec -it dbwebapp bash
+#pwd
+#docker images
+#docker rmi <idimages>
+#docker-compose down
+#docker-compose up
