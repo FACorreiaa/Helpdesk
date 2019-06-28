@@ -5,10 +5,8 @@
   "scripts": {
     "pooling": "node pooling-process.js",
     "start": "node app.js",
-    "dev": "nodemon app.js",
-    "test": "cross-env NODE_ENV=production npm install && start npm run pooling && start npm run pooling",
-    "docker:start": "cross-env NODE_ENV=production pm2-docker node ./source/backend/pooling-process.js && cross-env NODE_ENV=production pm2-docker node ./source/backend/app.js",
-    "docker": "cross-env NODE_ENV=production pm2 node ./source/backend/app.js"
+    "dev": "nodemon app.js"
+
   },
   "dependencies": {
     "@hapi/joi": "^15.1.0",

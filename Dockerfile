@@ -17,9 +17,9 @@
 
 FROM node:10-slim
 
-EXPOSE 3000
+#EXPOSE 3000
 
-ARG NODE_ENV
+#ARG NODE_ENV
 
 
 # Set environment variable with the address of the REST API
@@ -28,8 +28,8 @@ ARG NODE_ENV
 
 # make dir
 RUN mkdir -p /app
-WORKDIR /app/backend
-WORKDIR /app/frontend
+#WORKDIR /app
+#WORKDIR /app/frontend
 
 # copy apps to container
 COPY ./source/backend/ /app/backend
@@ -45,7 +45,7 @@ RUN npm i
 RUN npm run build
 
 # copy build app to express public folder
-RUN cp -r /app/frontend/build/* /app/backend/public
+RUN cp -r /app/frontend/build/ /app/backend/public
 
 # clean up
 RUN rm -rf /app/frontend
@@ -55,5 +55,5 @@ RUN rm -rf /app/frontend
 #ENV NODE_ENV=production
 
 # start the app
-WORKDIR /app/backend
-CMD ["npm", "run", "docker:start"]
+#WORKDIR /app/backend
+#CMD ["npm", "run", "docker:start"]
