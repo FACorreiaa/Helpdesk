@@ -809,10 +809,10 @@ router.get('/:id/vote/:score', async (req, res, next) => {
             
             await issue.save();
 
-            let msg = `<h1>you voted ${score} for issue ${id}</h1>`;
+            let msg = `<p>you voted ${score} for issue </p><i>${id}</i>`;
             res.send(msg);    
         } else {
-            let msg = `<h1>Allready voted for ${id}</h1>`;
+            let msg = `<p>Allready voted for</p><i>${id}</i>`;
             res.send(msg);    
         }
     }

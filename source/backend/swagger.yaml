@@ -6,14 +6,14 @@ info:
 host: "localhost:3000"
 basePath: "/"
 tags:
-  - name: "stats"
-    description:  "Permite obter metricas para estatisticas"
-  - name: "votes"
-    description:  "Permite fazer a avaliação da issue"
-  - name: "issues"
-    description:  "Permite fazer a gestão das issues"
   - name: "users"
     description:  "Permite fazer a gestão dosutilizadores"
+  - name: "issues"
+    description:  "Permite fazer a gestão das issues"
+  - name:  "Issues Collaborators"
+    description:  "Permite fazer a gestão das issues por colaborador"
+  - name: "votes"
+    description:  "Permite fazer a avaliação da issue"
 schemes:
   - "http"
   - "https"
@@ -23,170 +23,423 @@ consumes:
 produces:
   - "application/json"
   - "application/xml"
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
 paths:
-  /users:
+  /api/users:
     get:
+      security:
+        - Bearer: []
       tags:
-        - "users"
-      summary: "Permite obter os utilizadores"
-      operationId: "getUsers"
+        - users
+      summary: Fetches users based on query
       consumes:
-        - "application/json"
-        - "application/xml"
-      produces:
-        - "application/json"
-        - "application/xml"
+        - application/json
+      parameters:
+        - in: query
+          name: email
+          type: string
+        - in: query
+          name: logical
+          type: string
+          enum: ["AND","OR"]
+        - in: query
+          name: name
+          type: string
       responses:
-        '200':
-          description: "Success"
-          schema:
-            type: "array"
-            items:
-              $ref: '#/definitions/User'
-  /users/{id}:
+        200:
+          description: User fetched
+        422:
+          description: Missing query parameters
+        401:
+          description: Not authenticated
+  /api/users/{id}:
     put:
+      security:
+        - Bearer: []
       tags:
-        - "users"
-      summary: "Permite fazer o update de um user"
-      operationId: "putUser"
+        - users
+      summary: updated an user
       consumes:
-        - "application/json"
-        - "application/xml"
-      produces:
-        - "application/json"
-        - "application/xml"
+        - application/json
       parameters:
-        - in: "body"
-          name: "body"
+        - in: body
+          name: user
+          description: User object to be updated
           schema:
-            $ref: "#/definitions/User"
-        - in: "path"
-          name: "id"
-          description: "user id"
+            type: object
+            properties:
+              email:
+                type: string
+              name:
+                type: string
+        - in: path
+          name: id
+          description: user id
           required: true
-          type: "string"
+          type: string
       responses:
-        '200':
-          description: "User atualizado"
-        '404':
-          description: "Error "
+        200:
+          description: User has been updated
+        401:
+          description: Not authenticated
     delete:
+      security:
+        - Bearer: []
       tags:
-        - "users"
-      summary: "Permite eliminar um utilizador"
-      operationId: "deleteUser"
+        - users
+      summary: deletes a user
       consumes:
-        - "application/json"
-        - "application/xml"
-      produces:
-        - "application/json"
-        - "application/xml"
+        - application/json
       parameters:
-        - in: "path"
-          name: "id"
-          description: "user id"
+        - in: path
+          name: id
+          description: user id
           required: true
-          type: "integer"
+          type: string
       responses:
-        '200':
-          description: "User removido"
-        '404':
-          description: "Error "
-  /users/force:
+        200:
+          description: User has been deleted
+        401:
+          description: Not authenticated
+  /api/users/register:
+    post:
+      tags:
+        - users
+      summary: Creates a new user
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: user
+          description: The user to create
+          schema:
+            type: object
+            required:
+              - name
+              - email
+              - password
+              - password2
+            properties:
+              name:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+              password2:
+                type: string
+      responses:
+        200:
+          description: User registered
+  /api/users/login:
+    post:
+      tags:
+        - users
+      summary: Logs in a user
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: user
+          description: The user to create
+          schema:
+            type: object
+            required:
+              - email
+              - password
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+      responses:
+        200:
+          description: Login successful
+        400:
+          description: Passwor incorrect
+  /issues:
     get:
       tags:
-        - "users"
-      summary: "Permite obter os utilizadores"
-      operationId: "getUsersForce"
-      consumes:
-        - "application/json"
-        - "application/xml"
+        - issues
+      summary: gets all the issues by date
       produces:
-        - "application/json"
-        - "application/xml"
+        - application/json
+      parameters:
+        - in: query
+          name: from
+          type: string
+        - in: query
+          name: to
+          type: string
+        - in: query
+          name: limit
+          type: integer
+        - in: query
+          name: skip
+          type: integer
       responses:
-        '200':
-          description: "Success"
-          schema:
-            type: "array"
-            items:
-              $ref: '#/definitions/User'
+        200:
+          description: ok
+  /issues/projects:
+    get:
+      tags:
+        - issues
+      summary: gets projects
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: from
+          type: string
+        - in: query
+          name: to
+          type: string
+        - in: query
+          name: limit
+          type: integer
+        - in: query
+          name: skip
+          type: integer
+      responses:
+        200:
+          description: ok
+  /issues/collaborators:
+    get:
+      tags:
+        - Issues Collaborators
+      summary: gets collaborators
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: from
+          type: string
+        - in: query
+          name: to
+          type: string
+        - in: query
+          name: limit
+          type: integer
+        - in: query
+          name: skip
+          type: integer
+      responses:
+        200:
+          description: ok
+  /issues/count:
+    get:
+      tags:
+        - issues
+      summary: gets count
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: from
+          type: string
+        - in: query
+          name: to
+          type: string
+        - in: query
+          name: product_name
+          type: string
+        - in: query
+          name: collaborator_name
+          type: string
+      responses:
+        200:
+          description: ok
+  /issues/priority/responseTimeAvg:
+    get:
+      tags:
+        - issues
+      summary: gets average response time
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: from
+          type: string
+        - in: query
+          name: to
+          type: string
+        - in: query
+          name: product_name
+          type: string
+        - in: query
+          name: collaborator_name
+          type: string
+      responses:
+        200:
+          description: ok
+  /issues/scoreAvg:
+    get:
+      tags:
+        - issues
+      summary: gets score average
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: from
+          type: string
+        - in: query
+          name: to
+          type: string
+        - in: query
+          name: product_name
+          type: string
+        - in: query
+          name: collaborator_name
+          type: string
+      responses:
+        200:
+          description: ok
+  /issues/scoreStd:
+    get:
+      tags:
+        - issues
+      summary: gets score Standard
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: from
+          type: string
+        - in: query
+          name: to
+          type: string
+        - in: query
+          name: product_name
+          type: string
+        - in: query
+          name: collaborator_name
+          type: string
+      responses:
+        200:
+          description: ok
+  /issues/collaborators/responseTimeAvg:
+    get:
+      tags:
+        - Issues Collaborators
+      summary: gets average response time
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: from
+          type: string
+        - in: query
+          name: to
+          type: string
+        - in: query
+          name: product_name
+          type: string
+        - in: query
+          name: limit
+          type: integer
+      responses:
+        200:
+          description: ok
+  /issues/collaborators/scoreAvg:
+    get:
+      tags:
+        - Issues Collaborators
+      summary: gets average response time
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: from
+          type: string
+        - in: query
+          name: to
+          type: string
+        - in: query
+          name: product_name
+          type: string
+        - in: query
+          name: limit
+          type: integer
+      responses:
+        200:
+          description: ok
+  /issues/periodic/count:
+    get:
+      tags:
+        - issues
+      summary: gets periodic count
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: from
+          type: string
+        - in: query
+          name: to
+          type: string
+        - in: query
+          name: limit
+          type: integer
+        - in: query
+          name: skip
+          type: integer
+      responses:
+        200:
+          description: ok
+  /issues/periodic/scoreAvg:
+    get:
+      tags:
+        - issues
+      summary: gets periodic score average
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: from
+          type: string
+        - in: query
+          name: to
+          type: string
+        - in: query
+          name: limit
+          type: integer
+        - in: query
+          name: skip
+          type: integer
+      responses:
+        200:
+          description: ok
+  /issues/{id}/vote/{score}:
+    get:
+      tags:
+        - votes
+      summary: Voting
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          type: string
+          required: true
+        - in: path
+          name: score
+          type: integer
+          required: true
+      responses:
+        200:
+          description: ok
 definitions:
   User:
     type: "object"
     properties:
-      id:
-        type: "integer"
-      login:
+      name:
         type: "string"
-      firstname:
+      email:
         type: "string"
-      lastname:
-        type: "string"
-      mail:
-        type: "string"
-      created_on:
-        type: "string"
-      last_login_on:
-        type: "string"
-  Issue:
-    type: "object"
-    properties:
-      id:
-        type: "integer"
-      project:
-        type: "object"
-        properties:
-          id:
-            type: "integer"
-          name:
-            type: "string"
-      tracker:
-        type: "object"
-        properties:
-          id:
-            type: "integer"
-          name:
-            type: "string"
-      status:
-        type: "object"
-        properties:
-          id:
-            type: "integer"
-          name:
-            type: "string"
-      priority:
-        type: "object"
-        properties:
-          id:
-            type: "integer"
-          name:
-            type: "string"
-      author:
-        type: "object"
-        properties:
-          id:
-            type: "integer"
-          name:
-            type: "string"
-      assigned_to:
-        type: "object"
-        properties:
-          id:
-            type: "integer"
-          name:
-            type: "string"
-      subject:
-        type: "string"
-      description:
-        type: "string"
-      start_date:
-        type: "string"
-      done_ratio:
-        type: "integer"
-      closed_on:
-        type: "string"
-      created_on:
-        type: "string"
-      updated_on:
+      password:
         type: "string"

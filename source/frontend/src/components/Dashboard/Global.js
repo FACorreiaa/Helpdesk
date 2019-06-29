@@ -270,9 +270,9 @@ export class Global extends Component {
         `/issues/priority/responseTimeAvg?from=${from}&to=${to}`
       );
       let dataLevel = resLevel.data;
-
+      const toDays = 60 * 60 * 24 * 1000;
       let descrLevel = dataLevel.map(l => l._id.name);
-      let valueLevel = dataLevel.map(l => l.avgRTime);
+      let valueLevel = dataLevel.map(l => l.avgRTime / toDays);
 
       if (descrLevel === undefined) descrLevel = 0;
       if (valueLevel === undefined) valueLevel = 0;
