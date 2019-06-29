@@ -105,9 +105,7 @@ class Avg extends Component {
     to = this.state.formFields.to;
 
     try {
-      let res = await axios.get(
-        `/issues/periodic/count?from=${from}&to=${to}`
-      );
+      let res = await axios.get(`/issues/periodic/count?from=${from}&to=${to}`);
       let data = res.data;
       let finalDate = [];
       let score = data.map(s => s.count);
@@ -120,7 +118,7 @@ class Avg extends Component {
         labels: finalDate,
         datasets: [
           {
-            label: "média",
+            label: "Celeridade",
             fill: true,
             lineTension: 0.1,
             backgroundColor: "rgba(75,192,192,0.4)",
