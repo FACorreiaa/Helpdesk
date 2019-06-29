@@ -6,7 +6,7 @@ Comandos para correr e ter acesso à aplicação:
 2. Esperar
 3. Abrir o browser em `http://localhost:3000`
 
-Para o email, a conta é no servidor Gmail, com user webprogwork@gmail.com e palavra-pass $IPCA@2019#
+Para o email, a conta é no servidor Gmail, com as credenciais que estão no ficheiro .env
 
 ## Pastas
 
