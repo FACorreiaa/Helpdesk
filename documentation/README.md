@@ -62,11 +62,13 @@ A arquitetura da solução desenvolvida segue as boas práticas de desenvolvimen
 ### 1. Back-end
 #### API
 Na programação para ambiente web a API tem um conjunto de mensagens do tipo request e response com o uso do protocolo HTTP em formatos xml ou json (este aplicada nesta solução). Para esta solução pretende descrever todas as funcionalidades, de forma a garantir que aplicações externas não tenham a preocupação de se envolver em detalhes de implementação e possam usar todos os serviços disponíveis.
-##### Endpoints implementados
-Os endpoints segue o padrão
+##### Endpoints implementadosOs endpoints segue o padrão
 http://localhost:3000/issues/[indicador]?from=[Dt_inicial]&to=[dt_final]
+E ainda tem-se os que remetem a requisições específicas para colaborador e produto, que são:
+http://localhost:3000/issues/collaborators
+http://localhost:3000/issues/projects
 Para os indicadores Globais
-* http://localhost:3000/issues/cont?from=[Dt_inicial]&to=[dt_final]
+* http://localhost:3000/issues/count?from=[Dt_inicial]&to=[dt_final]
 Número total de pedidos e percentagem de pedidos sem avaliação
 * http://localhost:3000/issues/priority/responseTimeAvg?from=[Dt_inicial]&to=[dt_final]
 tempo médio de resposta por nível de prioridade
@@ -90,7 +92,7 @@ avaliação média da qualidade
 desvio padrão
 
 Para os indicadores Por Produto
-* http://localhost:3000/issues/cont?from=[Dt_inicial]&to=[dt_final]
+* http://localhost:3000/issues/count?from=[Dt_inicial]&to=[dt_final]
 Número total de pedidos e percentagem de pedidos sem avaliação
 * http://localhost:3000/issues/priority/responseTimeAvg?from=[Dt_inicial]&to=[dt_final]
 tempo médio de resposta por nível de prioridade
@@ -104,30 +106,24 @@ Top 10 dos colaboradores que responderam mais celeridade
 Top 10 dos colaboradores que obtiveram as melhores pontuações
 
 Indicadores temporais
-* http://localhost:3000/issues/periodic/count?[Dt_inicial]&to=[dt_final]&limit=1000
+* http://localhost:3000/issues/periodic/count?from=[Dt_inicial]&to=[dt_final]&limit=1000
  número de pedidos ao longo do tempo
-* http://localhost:3000/issues/periodic/scoreAvg?[Dt_inicial]&to=[dt_final]&limit=1000
+* http://localhost:3000/issues/periodic/scoreAvg?from=[Dt_inicial]&to=[dt_final]&limit=1000
 avaliação média da qualidade ao longo do tempo
 ##### Códigos de erro
 * Incidências fora das prévias determinadas como _Bug_, _Support_, _Question_ e _Report_, geram código de erro ==> ```Invalid ID: ${id}```,```User com id: ${id} não encontrada```, seja para uma busca, para uma atualização ou exclusão da mesma.
+* No frontend, ao tentar aceder manualmente a uma rota que não existe, a aplicação retorna para a página dos indicadores (se login ainda for válido) ou para a tela de login (se o login não tiver mais validade)
+* Ao tentar aceder a aplicação com utilizador não cadastrado, após o submit, a aplicação mantém-se na tel de login.
 ##### Link para a documentação da API (e.g. swagger)
-A documentação da solução está disponível [aqui](www.google.com) **AJEITAR O LINK CORRETO:**
+A documentação da solução nestá baseada no swagger, que está disponível [aqui](https://github.com/Knox316/Helpdesk)
 ##### Modelo de dados
-Para melhor ilustrar o modelo de dados, a figura a seguir tem a estrutura aplicada à solução.
-
-[![Modelo de dados](/documentation/images/modelo_de_dados.jpg "Modelo de dados")](https://www.google.com/url?sa=i&source=images&cd=&ved=2ahUKEwi1_eXDg_biAhWMohQKHTTzCUwQjRx6BAgBEAU&url=https%3A%2F%2Fwww.researchgate.net%2Ffigure%2FFigura-48-Modelo-de-dados-simplificado-da-plataforma-Fast-Science-visao-Workflow_fig20_308022717&psig=AOvVaw3Pb9x6mXVoFM9y8Jj3JkZu&ust=1561050255758699)
-
+Para melhor ilustrar o modelo de dados, a figura está disponível na área de appendix
 ##### Modelo de entidade relação
-Para melhor ilustrar o modelo de entidade relação, a figura a seguir tem a estrutura aplicada à solução.
-
-[![Modelo de enteidade relação](/documentation/images/modelo_de_entidade_relacao.jpg "Modelo de entidade relação")](https://www.google.com/url?sa=i&source=images&cd=&ved=2ahUKEwi1_eXDg_biAhWMohQKHTTzCUwQjRx6BAgBEAU&url=https%3A%2F%2Fwww.researchgate.net%2Ffigure%2FFigura-48-Modelo-de-dados-simplificado-da-plataforma-Fast-Science-visao-Workflow_fig20_308022717&psig=AOvVaw3Pb9x6mXVoFM9y8Jj3JkZu&ust=1561050255758699)
-
+Para melhor ilustrar o modelo de entidade relação, a figura está disponível na área de appendix
 ##### Coleções criadas
 As coleções criadas para apoio à solução são: **TIRO ESTA INFORMAÇÃO DOS MODELS?**
 ##### Índices e justificação da sua necessidade
-**NÃO SEI O QUE ESCREVER AQUI**
-
-
+O índice aplicado à base de dados fornecida é o **"id"**, pois é o identificador associado às issues, nome de claborador e nome de produto, que já estava na BD.
 ### 2. Front-end
 O frontend da solucação foi desenvolvido através da biblioteca em React.
 ##### Maquetes
@@ -142,11 +138,14 @@ O frontend da solucação foi desenvolvido através da biblioteca em React.
 7. tela com indicador temporal
 8. tela de logout
 ##### Modelo de interação
-* Diagrama de como as diferentes páginas interagem entre si
-**FAZER COM FLUXOGRAMA**
+No appendix pode-se consultar as telas de interação do frontend.
 ### 3. Bonificações - Login
-A solução tem o uso de login de um utilizador, via token, com adicional de adicionar novo utilizador para aceder à gestão dos indicadores.
-* Trabalhos adicionais realizados: **VERIFICAR SE TEM ALGO A MAIS DO QUE FOI PEDIDO**
+A solução tem o uso de login de um utilizador, via token, além de permitir que seja adicionado um novo utilizador na base de dados para aceder à gestão dos indicadores.
+* Trabalhos adicionais realizados:
+Diante do que não foi implementado, fica como trabalho futuro:
+-Mudar o tipo de mensagem para o formato JSONP
+-Associar outros índices
+-Implentar no frontend as ações de CRUD para as issues
 ### 4. Conclusões e trabalho futuro
 Este trabalho foi implementado com base no conhecimento da equipa, com a divisão de tarefas por partes distintas do que cada um fosse capaz de desenvolver. Ao longo do mesmo foi necessário muita pesquisa sobre o como executar as soluções requisitadas através de uma tecnologia que estivesse dentro do escopo da disciplina. 
 Em muitos casos, a equipa não tinha a base necessária para descorrer o desenvolvimento do mesmo, o que tomou muito tempo de pesquisa sobre qual solução adotar.
@@ -167,5 +166,18 @@ Como trabalho futuro, tem-se a questão de indicadores na forma de gráfica, uma
 #### Source code
 Pode aceder ao link [GitHub](https://github.com/Knox316/Helpdesk) onde está o código fonte completo e atualizado conforme enviado.
 
+#### Imagens das telas do frontend
+Login
+[![Login](/documentation/Login.png "Login")](https://github.com/Knox316/Helpdesk/edit/master/documentation/login.png)
+Cadastro de novo utilizador
+[![Cadastro](/documentation/CreateLogin.png "Cadastro")](https://github.com/Knox316/Helpdesk/edit/master/documentation/CreateLogin.png)
+Dashboard com Indicadores Globais
+[![Global](/documentation/Global.png "Global")](https://github.com/Knox316/Helpdesk/edit/master/documentation/Global.png)
+Dashboard com Indicadores por Colaborador
+[![Colaborador](/documentation/Colaborador.png "Colaborador")](https://github.com/Knox316/Helpdesk/edit/master/documentation/Colaborador.png)
+Dashboard com Indicadores por Produto
+[![Produto](/documentation/Produto.png "Produto")](https://github.com/Knox316/Helpdesk/edit/master/documentation/Produto.png)
+Dashboard com Indicadores Temporais
+[![Temporal](/documentation/Temporal.png "Temporal")](https://github.com/Knox316/Helpdesk/edit/master/documentation/Temporal.png)
 
-```
+
