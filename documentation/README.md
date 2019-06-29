@@ -160,7 +160,7 @@ Pode aceder ao link [GitHub](https://github.com/Knox316/Helpdesk) onde está o c
 
 #### Imagens do modelo de dados e coleções
 Collections
-[![Colletions](/documentation/colletions.png "Colletions")](https://github.com/Knox316/Helpdesk/edit/master/documentation/collections.png)
+[![Collections](/documentation/collections.png "Collections")](https://github.com/Knox316/Helpdesk/edit/master/documentation/collections.png)
 Collection Users
 [![Users](/documentation/users.png "Users")](https://github.com/Knox316/Helpdesk/edit/master/documentation/users.png)
 Collections issues
