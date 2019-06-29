@@ -254,8 +254,6 @@ export class Global extends Component {
       res = await axios.get(`/issues/count?from=${from}&to=${to}`);
       let data = res.data[0];
 
-      if (data === undefined) data = 0;
-
       rest = await axios.get(`/issues/scoreAvg?from=${from}&to=${to}`);
       let dataavg = rest.data[0];
 

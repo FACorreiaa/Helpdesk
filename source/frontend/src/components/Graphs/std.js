@@ -149,7 +149,7 @@ class Std extends Component {
         labels: finalDate,
         datasets: [
           {
-            label: "Pontuação",
+            label: "Avaliação média",
             fill: true,
             lineTension: 0.1,
             backgroundColor: "rgba(75,192,192,0.4)",

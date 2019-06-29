@@ -309,7 +309,6 @@ export class Produto extends Component {
     }
 
     let data = res.data[0];
-    if (data === undefined) data = 0;
 
     rest = await axios.get(
       `/issues/scoreAvg?from=${from}&to=${to}&product_name=${prod}`

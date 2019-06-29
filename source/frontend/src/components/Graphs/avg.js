@@ -118,7 +118,7 @@ class Avg extends Component {
         labels: finalDate,
         datasets: [
           {
-            label: "Celeridade",
+            label: "Numero pedidos",
             fill: true,
             lineTension: 0.1,
             backgroundColor: "rgba(75,192,192,0.4)",
