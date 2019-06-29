@@ -56,7 +56,7 @@ Para o docker tem-se 1 container identificado como dbwebapp_image, formado por 3
 4. Ver a app
 ### 1. Back-end
 #### API
-Na programação para ambiente web a API tem um conjunto de mensagens do tipo request e response com o uso do protocolo HTTP em formatos xml ou json (este aplicada nesta solução). Para esta solução pretende descrever todas as funcionalidades, de forma a garantir que aplicações externas não tenham a preocupação de se envolver em detalhes de implementação e possam usar todos os serviços disponíveis.
+Na programação para ambiente web a API tem um conjunto de mensagens do tipo request e response com o uso do protocolo HTTP em formatos xml ou jsonp (este aplicada nesta solução). Para esta solução pretende descrever todas as funcionalidades, de forma a garantir que aplicações externas não tenham a preocupação de se envolver em detalhes de implementação e possam usar todos os serviços disponíveis.
 ##### Endpoints implementadosOs endpoints segue o padrão
 http://localhost:3000/issues/[indicador]?from=[Dt_inicial]&to=[dt_final]
 E ainda tem-se os que remetem a requisições específicas para colaborador e produto, que são:
@@ -140,7 +140,7 @@ Diante do que não foi implementado, fica como trabalho futuro:
 -Códigos de erro
 ### 4. Conclusões e trabalho futuro
 Este trabalho foi implementado com base no conhecimento da equipa, com a divisão de tarefas por partes distintas do que cada um fosse capaz de desenvolver. Ao longo do mesmo foi necessário muita pesquisa sobre o como executar as soluções requisitadas através de uma tecnologia que estivesse dentro do escopo da disciplina. 
-Em muitos casos, a equipa não tinha a base necessária para descorrer o desenvolvimento do mesmo, o que tomou muito tempo de pesquisa sobre qual solução adotar.
+Em muitos casos, a equipa não tinha a base necessária para descorrer o desenvolvimento do mesmo de forma rápida, o que exigiu o formato tentativa-erro, o que tomou muito tempo paqra descobrir solução correta.
 O término do trabalho é considerado por todos um desafio superado, pois com a pouca experiência de todos da equipa em conseguir perceber o que estava a ser pedido nas instruções do trabalho em tão pouco tempo, já é considerado uma grande superação.
 Como trabalho futuro, tem-se a questão de indicadores na forma de gráfica, uma análise mais apurada dos endpoints disponíveis, o uso de uma solução mais acertada para as coleções.
 ### 5. Referências
