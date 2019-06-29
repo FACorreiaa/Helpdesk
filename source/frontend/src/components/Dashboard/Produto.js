@@ -309,7 +309,6 @@ export class Produto extends Component {
     }
 
     let data = res.data[0];
-    console.log(data);
     if (data === undefined) data = 0;
 
     rest = await axios.get(
@@ -331,7 +330,7 @@ export class Produto extends Component {
     const toDays = 60 * 60 * 24 * 1000;
 
     let descrLevel = dataLevel.map(l => l._id.name);
-    let valueLevel = dataLevel.map(l => l.avgRTime / toDays);
+    let valueLevel = dataLevel.map(l => Math.round(l.avgRTime / toDays));
     if (descrLevel === undefined) descrLevel = 0;
     if (valueLevel === undefined) valueLevel = 0;
 

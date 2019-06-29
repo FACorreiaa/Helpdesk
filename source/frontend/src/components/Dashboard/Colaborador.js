@@ -256,8 +256,6 @@ export class Colaborador extends Component {
     let rest;
     let resStd;
     let resLevel;
-    let resFast;
-    let resScore;
     try {
       res = await axios.get(
         `/issues/count?from=${from}&to=${to}&collaborator_name=${colab}`
@@ -288,7 +286,7 @@ export class Colaborador extends Component {
     const toDays = 60 * 60 * 24 * 1000;
 
     let descrLevel = dataLevel.map(l => l._id.name);
-    let valueLevel = dataLevel.map(l => l.avgRTime / toDays);
+    let valueLevel = dataLevel.map(l => Math.round(l.avgRTime / toDays));
     if (descrLevel === undefined) descrLevel = 0;
     if (valueLevel === undefined) valueLevel = 0;
 

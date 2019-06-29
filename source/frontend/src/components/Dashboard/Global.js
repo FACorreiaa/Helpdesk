@@ -259,7 +259,6 @@ export class Global extends Component {
       rest = await axios.get(`/issues/scoreAvg?from=${from}&to=${to}`);
       let dataavg = rest.data[0];
 
-      console.log(dataavg);
       if (dataavg === undefined) dataavg = 0;
 
       resStd = await axios.get(`/issues/scoreStd?from=${from}&to=${to}`);
@@ -272,7 +271,7 @@ export class Global extends Component {
       let dataLevel = resLevel.data;
       const toDays = 60 * 60 * 24 * 1000;
       let descrLevel = dataLevel.map(l => l._id.name);
-      let valueLevel = dataLevel.map(l => l.avgRTime / toDays);
+      let valueLevel = dataLevel.map(l => Math.round(l.avgRTime / toDays));
 
       if (descrLevel === undefined) descrLevel = 0;
       if (valueLevel === undefined) valueLevel = 0;
