@@ -67,7 +67,9 @@ export class Produto extends Component {
       this.createData("Nº total pedidos", this.state.count.total),
       this.createData(
         "% Pedidos Não Avaliados",
-        this.state.count.neval / this.state.count.total
+        isNaN(this.state.count.neval / this.state.count.total)
+          ? 0
+          : this.state.count.neval / this.state.count.total
       ),
       this.createData(
         "Avaliação média Qualidade",
