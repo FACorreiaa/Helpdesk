@@ -45,7 +45,7 @@ RUN npm i
 RUN npm run build
 
 # copy build app to express public folder
-RUN cp -r /app/frontend/build/ /app/backend/public
+RUN cp -r /app/frontend/build/* /app/backend/public
 
 # clean up
 RUN rm -rf /app/frontend

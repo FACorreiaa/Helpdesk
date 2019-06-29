@@ -34,8 +34,8 @@ export class Produto extends Component {
       prods: [],
       prod: "",
       count: {
-        total: "-",
-        neval: "-"
+        total: "0",
+        neval: "0"
       },
       avgScore: { avgScore: "-" },
       stdDevScore: { stdDevScore: "-" },
@@ -65,7 +65,10 @@ export class Produto extends Component {
   render() {
     const rows = [
       this.createData("Nº total pedidos", this.state.count.total),
-      this.createData("% Pedidos Não Avaliados", this.state.count.neval),
+      this.createData(
+        "% Pedidos Não Avaliados",
+        this.state.count.neval / this.state.count.total
+      ),
       this.createData(
         "Avaliação média Qualidade",
         this.state.avgScore.avgScore

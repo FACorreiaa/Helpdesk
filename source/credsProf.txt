@@ -1,0 +1,3 @@
+- FORCED_EMAIL = webprogwork@gmail.com
+      - EMAIL_ACCOUNT=webprogwork@gmail.com
+      - EMAIL_PASSWORD=$IPCA@2019#

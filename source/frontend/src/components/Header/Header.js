@@ -6,38 +6,27 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
-import {
-  connect
-} from "react-redux";
-import {
-  logoutUser
-} from "../../actions/authActions";
+import { connect } from "react-redux";
+import { logoutUser } from "../../actions/authActions";
 import Global from "../Dashboard/Global";
 import Produto from "../Dashboard/Produto";
 import Colaborador from "../Dashboard/Colaborador";
 import Temporais from "../Dashboard/Temporais";
 import CSSTransitionGroup from "react-addons-css-transition-group";
 
-import {
-  classes
-} from "../constants/tabs";
+import { classes } from "../constants/tabs";
 
 function TabContainer(props) {
-  return ( <
-    Typography component = "div"
-    style = {
-      {
+  return (
+    <Typography
+      component="div"
+      style={{
         padding: 8 * 3
-      }
-    } >
-    {
-      " "
-    } {
-      props.children
-    } {
-      " "
-    } <
-    /Typography>
+      }}
+    >
+      {" "}
+      {props.children}{" "}
+    </Typography>
   );
 }
 
@@ -48,32 +37,18 @@ TabContainer.propTypes = {
 //const sections = ["Indicador 1", "Indicador 2", "Indicador 2", "Indicador 2"];
 
 const PageShell = (Page, previous) => {
-  return props => ( <
-    div className = "page" >
-    <
-    CSSTransitionGroup transitionAppear = {
-      true
-    }
-    transitionAppearTimeout = {
-      600
-    }
-    transitionEnterTimeout = {
-      600
-    }
-    transitionLeaveTimeout = {
-      600
-    }
-    transitionName = {
-      props.match.path === "/one" ? "SlideIn" : "SlideOut"
-    } >
-    {
-      console.log(props)
-    } < Page {
-      ...props
-    }
-    />{" "} <
-    /CSSTransitionGroup>{" "} <
-    /div>
+  return props => (
+    <div className="page">
+      <CSSTransitionGroup
+        transitionAppear={true}
+        transitionAppearTimeout={600}
+        transitionEnterTimeout={600}
+        transitionLeaveTimeout={600}
+        transitionName={props.match.path === "/one" ? "SlideIn" : "SlideOut"}
+      >
+        {console.log(props)} <Page {...props} />{" "}
+      </CSSTransitionGroup>{" "}
+    </div>
   );
 };
 
@@ -89,102 +64,54 @@ const Header = props => {
     props.logoutUser();
   }
 
-  return ( <
-    div className = {
-      classes.root
-    } >
-    <
-    AppBar position = "sticky" >
-    <
-    Tabs value = {
-      value
-    }
-    onChange = {
-      handleChange
-    }
-    centered > {
-      " "
-    } {
-      /* <Tabs value={value} onChange={handleChange}>
+  return (
+    <div className={classes.root}>
+      <AppBar position="sticky">
+        <Tabs value={value} onChange={handleChange} centered>
+          {" "}
+          {/* <Tabs value={value} onChange={handleChange}>
                             {sections.map(section => (
                               <Tab label={section} />
                             ))}
-                          </Tabs> */
-    } {
-      " "
-    } <
-    Tab label = "Indicadores Globais" / >
-    <
-    Tab label = "Indicadores Colaboradores" / >
-    <
-    Tab label = "Indicadores Produto" / >
-    <
-    Tab label = "Indicadores Temporais" / > {
-      props.name
-    } <
-    Button color = "inherit"
-    onClick = {
-      onLogoutClick.bind(this)
-    } >
-    Logout {
-      " "
-    } <
-    /Button>{" "} <
-    /Tabs>{" "} <
-    /AppBar>{" "} {
-      value === 0 && ( <
-        TabContainer >
-        <
-        Container maxWidth = "xl" >
-        <
-        Global / >
-        <
-        /Container>{" "} <
-        /TabContainer>
-      )
-    } {
-      " "
-    } {
-      value === 1 && ( <
-        TabContainer >
-        <
-        Container maxWidth = "xl" >
-        <
-        Colaborador / >
-        <
-        /Container>{" "} <
-        /TabContainer>
-      )
-    } {
-      " "
-    } {
-      value === 2 && ( <
-        TabContainer >
-        <
-        Container maxWidth = "xl" >
-        <
-        Produto / >
-        <
-        /Container>{" "} <
-        /TabContainer>
-      )
-    } {
-      " "
-    } {
-      value === 3 && ( <
-        TabContainer >
-        <
-        Container maxWidth = "xl" >
-        <
-        Temporais / >
-        <
-        /Container>{" "} <
-        /TabContainer>
-      )
-    } {
-      " "
-    } <
-    /div>
+                          </Tabs> */}{" "}
+          <Tab label="Indicadores Globais" />
+          <Tab label="Indicadores Colaboradores" />
+          <Tab label="Indicadores Produto" />
+          <Tab label="Indicadores Temporais" /> {props.name}{" "}
+          <Button color="inherit" onClick={onLogoutClick.bind(this)}>
+            Logout{" "}
+          </Button>{" "}
+        </Tabs>{" "}
+      </AppBar>{" "}
+      {value === 0 && (
+        <TabContainer>
+          <Container maxWidth="xl">
+            <Global />
+          </Container>{" "}
+        </TabContainer>
+      )}{" "}
+      {value === 1 && (
+        <TabContainer>
+          <Container maxWidth="xl">
+            <Colaborador />
+          </Container>{" "}
+        </TabContainer>
+      )}{" "}
+      {value === 2 && (
+        <TabContainer>
+          <Container maxWidth="xl">
+            <Produto />
+          </Container>{" "}
+        </TabContainer>
+      )}{" "}
+      {value === 3 && (
+        <TabContainer>
+          <Container maxWidth="xl">
+            <Temporais />
+          </Container>{" "}
+        </TabContainer>
+      )}{" "}
+    </div>
   );
 };
 
@@ -197,7 +124,8 @@ const mapStateToProps = state => ({
   auth: state.auth
 });
 export default connect(
-  mapStateToProps, {
+  mapStateToProps,
+  {
     logoutUser
   }
 )(Header);

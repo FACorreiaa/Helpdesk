@@ -152,7 +152,7 @@ export class Signup extends Component {
                 Submit{" "}
               </Button>{" "}
               <Grid item>
-                <Link href="#/Login" variant="body2">
+                <Link href="/Login" variant="body2">
                   {" "}
                   {"Already have an account? Log in!"}{" "}
                 </Link>{" "}

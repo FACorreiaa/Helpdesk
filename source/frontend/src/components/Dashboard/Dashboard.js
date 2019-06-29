@@ -1,6 +1,4 @@
-import React, {
-  Component
-} from "react";
+import React, { Component } from "react";
 import Header from "../Header/Header";
 export class Dashboard extends Component {
   onLogoutClick = e => {
@@ -9,12 +7,10 @@ export class Dashboard extends Component {
   };
 
   render() {
-    return ( <
-      >
-      <
-      Header / >
-      <
-      />
+    return (
+      <>
+        <Header />
+      </>
     );
   }
 }

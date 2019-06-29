@@ -31,8 +31,8 @@ export class Colaborador extends Component {
       prods: ["Sem nome"],
       prod: "",
       count: {
-        total: "-",
-        neval: "-"
+        total: "0",
+        neval: "0"
       },
       avgScore: { avgScore: "-" },
       stdDevScore: { stdDevScore: "-" },
@@ -60,7 +60,12 @@ export class Colaborador extends Component {
   render() {
     const rows = [
       this.createData("Nº total pedidos", this.state.count.total),
-      this.createData("% Pedidos Não Avaliados", this.state.count.neval),
+      this.createData(
+        "% Pedidos Não Avaliados",
+        isNaN(this.state.count.neval / this.state.count.total)
+          ? 0
+          : this.state.count.neval / this.state.count.total
+      ),
       this.createData(
         "Avaliação média Qualidade",
         this.state.avgScore.avgScore

@@ -8,6 +8,6 @@ module.exports = (req, res, next) => {
     req.UserData = { name: decodedToken.name };
     next();
   } catch (error) {
-    res.status(401).jsonp({ message: "Auth failed!" });
+    res.status(401).json({ message: "Auth failed!" });
   }
 };

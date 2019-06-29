@@ -27,8 +27,8 @@ export class Global extends Component {
         to: ""
       },
       count: {
-        total: "-",
-        neval: "-"
+        total: "0",
+        neval: "0"
       },
       avgScore: { avgScore: "-" },
       stdDevScore: { stdDevScore: "-" },
@@ -61,7 +61,10 @@ export class Global extends Component {
 
     const rows = [
       this.createData("Nº total pedidos", this.state.count.total),
-      this.createData("% Pedidos Não Avaliados", this.state.count.neval),
+      this.createData(
+        "% Pedidos Não Avaliados",
+        this.state.count.neval / this.state.count.total
+      ),
       this.createData(
         "Avaliação média Qualidade",
         this.state.avgScore.avgScore
@@ -251,8 +254,11 @@ export class Global extends Component {
     let resFast;
     let resScore;
     try {
-      res = await axios.get(`/issues/count?from=${from}&to=${to}`);
+      res = await axios.get(
+        `http://localhost:3000/issues/count?from=${from}&to=${to}`
+      );
       let data = res.data[0];
+      console.log(this.state);
 
       rest = await axios.get(`/issues/scoreAvg?from=${from}&to=${to}`);
       let dataavg = rest.data[0];

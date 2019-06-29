@@ -23,12 +23,12 @@ router.post("/register", (req, res) => {
 
   // Check validation
   if (!isValid) {
-    return res.status(400).jsonp(errors);
+    return res.status(400).json(errors);
   }
 
   User.findOne({ email: req.body.email }).then(user => {
     if (user) {
-      return res.status(400).jsonp({ email: "Email already exists" });
+      return res.status(400).json({ email: "Email already exists" });
     } else {
       const newUser = new User({
         name: req.body.name,
@@ -43,7 +43,7 @@ router.post("/register", (req, res) => {
           newUser.password = hash;
           newUser
             .save()
-            .then(user => res.jsonp(user))
+            .then(user => res.json(user))
             .catch(err => console.log(err));
         });
       });
@@ -61,7 +61,7 @@ router.post("/login", (req, res) => {
 
   // Check validation
   if (!isValid) {
-    return res.status(400).jsonp(errors);
+    return res.status(400).json(errors);
   }
 
   const email = req.body.email;
@@ -71,7 +71,7 @@ router.post("/login", (req, res) => {
   User.findOne({ email }).then(user => {
     // Check if user exists
     if (!user) {
-      return res.status(404).jsonp({ emailnotfound: "Email not found" });
+      return res.status(404).json({ emailnotfound: "Email not found" });
     }
 
     // Check password
@@ -92,7 +92,7 @@ router.post("/login", (req, res) => {
             expiresIn: 31556926 // 1 year in seconds
           },
           (err, token) => {
-            res.jsonp({
+            res.json({
               success: true,
               token: "Bearer " + token
             });
@@ -101,7 +101,7 @@ router.post("/login", (req, res) => {
       } else {
         return res
           .status(400)
-          .jsonp({ passwordincorrect: "Password incorrect" });
+          .json({ passwordincorrect: "Password incorrect" });
       }
     });
   });
@@ -111,9 +111,9 @@ router.delete("/:id", auth, async (req, res, next) => {
   try {
     const result = await User.deleteOne({ _id: req.params.id });
     if (result.n > 0) {
-      res.status(200).jsonp({ message: "user removed" });
+      res.status(200).json({ message: "user removed" });
     } else {
-      res.status(401).jsonp({ message: "Not allowed" });
+      res.status(401).json({ message: "Not allowed" });
     }
   } catch (error) {
     next(error);
@@ -128,7 +128,7 @@ router.put("/:id", auth, async (req, res, next) => {
       { $set: req.body },
       { new: true }
     );
-    res.status(200).jsonp({ data: user, message: "User has been updated" });
+    res.status(200).json({ data: user, message: "User has been updated" });
   } catch (error) {
     next(error);
   }
@@ -144,9 +144,9 @@ router.get("/", auth, async (req, res, next) => {
             { name: new RegExp(req.query.name, "i") }
           ]
         });
-        res.status(200).jsonp({ data: user, message: "Users fetched" });
+        res.status(200).json({ data: user, message: "Users fetched" });
       } else {
-        res.status(422).jsonp({ message: "Missing query parameters" });
+        res.status(422).json({ message: "Missing query parameters" });
       }
     } else if (req.query.email || req.query.name) {
       const user = await User.find({
@@ -155,10 +155,10 @@ router.get("/", auth, async (req, res, next) => {
           { name: new RegExp(req.query.name, "i") }
         ]
       });
-      res.status(200).jsonp({ data: user, message: "Users fetched" });
+      res.status(200).json({ data: user, message: "Users fetched" });
     } else {
       const user = await User.find({});
-      res.status(200).jsonp({ data: user, message: "Users fetched" });
+      res.status(200).json({ data: user, message: "Users fetched" });
     }
   } catch (error) {
     next(error);
