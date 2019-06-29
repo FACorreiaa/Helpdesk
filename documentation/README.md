@@ -109,7 +109,7 @@ avaliação média da qualidade ao longo do tempo
 * No frontend, ao tentar aceder manualmente a uma rota que não existe, a aplicação retorna para a página dos indicadores (se login ainda for válido) ou para a tela de login (se o login não tiver mais validade)
 * Ao tentar aceder a aplicação com utilizador não cadastrado, após o submit, a aplicação mantém-se na tela de login.
 ##### Link para a documentação da API (e.g. swagger)
-A documentação da solução está baseada no swagger, pelo link [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
+A documentação da solução está baseada no swagger, pelo link [http://localhost:3000/api-docs](http://localhost:3000/api-docs). Por ele foi incluído o uso do CRUD, com os endpoints que realizam as demais ações que não estão na solução em frontend. 
 ##### Modelo de dados
 Para melhor ilustrar o modelo de dados, a figura está disponível na área de appendix
 ##### Coleções criadas
