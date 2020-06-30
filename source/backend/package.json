@@ -21,7 +21,7 @@
     "ejs": "~2.6.1",
     "errorhandler": "^1.5.1",
     "express": "~4.16.1",
-    "express-jwt": "^5.3.1",
+    "express-jwt": "^6.0.0",
     "express-session": "^1.16.2",
     "http-errors": "~1.6.3",
     "install": "^0.12.2",
