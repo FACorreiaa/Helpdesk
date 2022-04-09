@@ -27,7 +27,7 @@
     "install": "^0.12.2",
     "is-empty": "^1.2.0",
     "jsonwebtoken": "^8.5.1",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "mongoose": "^5.5.14",
     "mongoose-id-validator": "^0.5.3",
     "morgan": "~1.9.1",
